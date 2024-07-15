@@ -1,4 +1,4 @@
-package gohtml
+package parse
 
 import (
 	"fmt"
@@ -110,6 +110,8 @@ func parseTypes(templateName string, t *template.Template) ([]StructDef, error) 
 func parseNode(path []string, node parse.Node, fields []StructField) []StructField {
 	switch n := node.(type) {
 	case *parse.ActionNode:
+		fields = append(fields, parseActionNodeField(path, n.Pipe.String()))
+	case *parse.IfNode:
 		fields = append(fields, parseActionNodeField(path, n.Pipe.String()))
 	case *parse.RangeNode:
 		//fmt.Println(n.Pipe.String())

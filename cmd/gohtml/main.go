@@ -6,13 +6,16 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/fritzkeyzer/gohtml"
+	"github.com/fritzkeyzer/gohtml/parse"
+)
+
+var (
+	dirFlag     = flag.String("d", "", "directory to parse")
+	fileFlag    = flag.String("f", "", "file to parse")
+	verboseFlag = flag.Bool("v", false, "verbose")
 )
 
 func main() {
-	dirFlag := flag.String("d", "", "directory to parse")
-	fileFlag := flag.String("f", "", "file to parse")
-	verboseFlag := flag.Bool("v", false, "verbose")
 	flag.Parse()
 	dir := *dirFlag
 	file := *fileFlag
@@ -36,7 +39,7 @@ func main() {
 	}
 
 	for _, file := range files {
-		t := gohtml.MustParseTemplate(file)
+		t := parse.MustParseTemplate(file)
 
 		if verbose {
 			logObj(t)
@@ -53,7 +56,7 @@ func main() {
 	}
 
 	if len(files) > 0 {
-		gohtml.GohtmlFile(dir)
+		parse.GohtmlFile(dir)
 	}
 }
 

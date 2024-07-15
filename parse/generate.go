@@ -1,4 +1,4 @@
-package gohtml
+package parse
 
 import (
 	"bytes"

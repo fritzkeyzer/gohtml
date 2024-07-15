@@ -1,4 +1,4 @@
-package gohtml
+package parse
 
 import (
 	"bytes"
@@ -16,11 +16,14 @@ func TestTemplate_Generate(t *testing.T) {
 
 	tcs := []tc{
 		{
+			TemplateFile: "tests/basic.gohtml",
+			WantFile:     "tests/basic.gohtml.go",
+		}, {
 			TemplateFile: "tests/person.gohtml",
 			WantFile:     "tests/person.gohtml.go",
 		}, {
-			TemplateFile: "tests/basic.gohtml",
-			WantFile:     "tests/basic.gohtml.go",
+			TemplateFile: "tests/conditional.gohtml",
+			WantFile:     "tests/conditional.gohtml.go",
 		},
 	}
 
