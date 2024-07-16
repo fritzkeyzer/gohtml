@@ -6,46 +6,44 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/fritzkeyzer/gohtml/config"
 	"github.com/fritzkeyzer/gohtml/parse"
 )
 
 var (
-	dirFlag     = flag.String("d", "", "directory to parse")
-	fileFlag    = flag.String("f", "", "file to parse")
+	cfgFlag     = flag.String("c", "gohtml.yaml", "config file")
 	verboseFlag = flag.Bool("v", false, "verbose")
 )
 
 func main() {
 	flag.Parse()
-	dir := *dirFlag
-	file := *fileFlag
-	verbose := *verboseFlag
 
-	if dir == "" && file == "" {
-		flag.PrintDefaults()
-		os.Exit(1)
+	cfg, err := config.Parse(*cfgFlag)
+	if err != nil {
+		panic(err)
 	}
 
+	for _, g := range cfg.Gohtml {
+		run(g)
+	}
+}
+
+func run(c config.GoHTML) {
 	var files []string
-	var err error
-	if file == "" {
-		files, err = filepath.Glob(filepath.Join(dir, "*.gohtml"))
-		if err != nil {
-			panic(err)
-		}
-	} else {
-		files = []string{file}
-		dir = filepath.Dir(file)
+	files, err := filepath.Glob(filepath.Join(c.Templates, "*.gohtml"))
+	if err != nil {
+		panic(err)
 	}
 
-	for _, file := range files {
-		t := parse.MustParseTemplate(file)
+	for _, filePath := range files {
+		t := parse.MustParseTemplate(filePath)
 
-		if verbose {
+		if *verboseFlag {
 			logObj(t)
 		}
 
-		file, err := os.Create(file + ".go")
+		genFilePath := filePath + c.Gen.OutputFilesSuffix
+		file, err := os.Create(genFilePath)
 		if err != nil {
 			panic(err)
 		}
@@ -56,7 +54,7 @@ func main() {
 	}
 
 	if len(files) > 0 {
-		parse.GohtmlFile(dir)
+		parse.GohtmlFile(c.Templates)
 	}
 }
 

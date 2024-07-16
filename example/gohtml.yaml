@@ -1,0 +1,15 @@
+version: "0"
+gohtml:
+  #  template
+  - templates: "template"
+    gen:
+      package: "template"
+      output_files_suffix: ".go"
+      output_template_file_name: "gohtml.gen.go"
+
+  #  layout
+  - templates: "layout"
+    gen:
+      package: "layout"
+      output_files_suffix: ".go"
+      output_template_file_name: "gohtml.gen.go"

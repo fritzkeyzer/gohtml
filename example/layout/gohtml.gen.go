@@ -1,3 +1,3 @@
-package examples
+package layout
 
 var LiveReload bool
