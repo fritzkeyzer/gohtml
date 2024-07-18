@@ -1,3 +1,3 @@
-package layout
+package views
 
 var LiveReload bool

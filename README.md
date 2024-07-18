@@ -13,18 +13,21 @@ gohtml
 gohtml -c frontend/templates/gohtml.yaml
 ```
 
-# Example
-See a full example in the example directory
+# Examples
+See a full example in the example directory.
+Also take a look at the tests directory as it demonstrates the range input-output capabilities.
 
 `hello.gohtml`
 ```gotemplate
-<p>Hello {{.Name}}</p>
+<h1>Hello {{.Name}}</h1>
+<p>{{.Message}}</p>
 ```
 
-Generates: `hello.gohtml.go` that include this:
+Generates: `hello.gohtml.go` that includes this:
 ```go
 type HelloData struct{
 	Name any
+	Message any
 }
 
 // Hello renders the "Hello" template as an HTML fragment
@@ -34,32 +37,35 @@ func Hello(data HelloData) template.HTML
 func RenderHello(w io.Writer, data HelloData) error
 ```
 
-
 # V0
 This tool and library are still in development.
 Versions prior to v1 have no compatibility guarantees.
 
-# TODO
-- [ ] Cache parsed templates
+# Roadmap
+- [ ] Support multiple template definitions within one file with. Including usage with args
 - [ ] Handle top level (unnamed) variables
-- [ ] Prune unused types / fix generation issue
-- [ ] Option to specify generated suffix
 - [ ] Support templating JS: *.gojs
 - [ ] Support for remaining text template spec
+- [x] Cache parsed templates
+- [x] Option to specify generated suffix
 - [x] YAML config
 
 # Contributing
 Feel free to post issues - or if you're able to - fix it and submit a PR!
 
-# Known issues:
-- When generating types and a loop is involved - an unused type is generated. The failing test: `TestTemplate_Generate/tests/person.gohtml` captures this issue.
-
 # Changelog
+
+### v0.0.3
+- Simplified config
+- Fix superfluous type definitions
+- Add more tests, including parsing and generation
+- Apply standard go formatting to generated code
 
 ### v0.0.2
 - Added yaml config support. 
 - By default, gohtml checks for a file alongside it: `gohtml.yaml` otherwise the config file can be specified with the `-c` flag.
-- The `-d` and `-f` flags have been removed in favour of using a config file. 
+- The `-d` and `-f` flags have been removed in favour of using a config file.
+- Known issue: When generating types and a loop is involved - an unused type is generated. The failing test: `TestTemplate_Generate/tests/person.gohtml` captures this issue.
 
 ### V0.0.1
 Initial version supports:

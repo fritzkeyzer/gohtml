@@ -1,0 +1,8 @@
+<h1>Person</h1>
+<p>Name: {{.Name}}</p>
+<p>Age: {{.Age}}</p>
+<p>Phone: {{.Contact.Phone}}</p>
+<p>Email: {{.Contact.Email}}</p>
+<div>{{range $link := .Socials}}
+        <a href="{{$link.Href}}">{{$link.Name}}</a>{{end}}
+</div>

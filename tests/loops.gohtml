@@ -1,0 +1,7 @@
+{{range .Widgets}}
+    {{.Name}} - {{.Price}}
+{{end}}
+
+{{range $link := .Socials}}
+    {{$link.Name}} {{$link.Href}}
+{{end}}

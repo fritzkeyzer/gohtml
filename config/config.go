@@ -3,22 +3,19 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	Version string   `yaml:"version"`
-	Gohtml  []GoHTML `yaml:"gohtml"`
+	Version string `yaml:"version"`
+	Dirs    []Dir  `yaml:"directories"`
 }
 
-type GoHTML struct {
-	Templates string `yaml:"templates"`
-	Gen       Gen    `yaml:"gen"`
-}
-
-type Gen struct {
-	Package                string `yaml:"package"`
+type Dir struct {
+	Path                   string `yaml:"path"`
+	PackageName            string `yaml:"package_name"`
 	OutputFilesSuffix      string `yaml:"output_files_suffix"`
 	OutputTemplateFileName string `yaml:"output_template_file_name"`
 }
@@ -37,10 +34,19 @@ func Parse(path string) (*Config, error) {
 	}
 
 	// apply defaults
-	for _, gohtml := range cfg.Gohtml {
-		if gohtml.Gen.OutputFilesSuffix == "" {
-			gohtml.Gen.OutputFilesSuffix = ".go"
+	for i := range cfg.Dirs {
+		if cfg.Dirs[i].OutputFilesSuffix == "" {
+			cfg.Dirs[i].OutputFilesSuffix = ".go"
 		}
+		if cfg.Dirs[i].PackageName == "" {
+			cfg.Dirs[i].PackageName = filepath.Base(cfg.Dirs[i].Path)
+		}
+	}
+
+	// apply relative paths from config dir
+	cfgDir := filepath.Dir(path)
+	for i := range cfg.Dirs {
+		cfg.Dirs[i].Path = filepath.Join(cfgDir, cfg.Dirs[i].Path)
 	}
 
 	return &cfg, nil
