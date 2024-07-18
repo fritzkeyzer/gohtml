@@ -48,7 +48,7 @@ func Render{{.Name}}(w io.Writer{{ if .Structs}}, data {{.Name}}Data{{end}}) err
 	tmpl := {{.Name}}Template
 	if LiveReload {
 		var err error
-		tmpl, err = template.ParseFiles("example/template/conditional.gohtml")
+		tmpl, err = template.ParseFiles({{.FilePath}})
 		if err != nil {
 			return err
 		}

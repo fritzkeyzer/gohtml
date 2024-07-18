@@ -55,6 +55,9 @@ Feel free to post issues - or if you're able to - fix it and submit a PR!
 
 # Changelog
 
+### v0.0.4
+- Fix generated filepath bug
+
 ### v0.0.3
 - Simplified config
 - Fix superfluous type definitions
