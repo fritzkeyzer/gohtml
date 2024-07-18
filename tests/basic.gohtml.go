@@ -47,7 +47,7 @@ func RenderBasic(w io.Writer, data BasicData) error {
 	tmpl := BasicTemplate
 	if LiveReload {
 		var err error
-		tmpl, err = template.ParseFiles("example/template/conditional.gohtml")
+		tmpl, err = template.ParseFiles("tests/basic.gohtml")
 		if err != nil {
 			return err
 		}

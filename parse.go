@@ -20,10 +20,11 @@ type GoHTML struct {
 }
 
 type Template struct {
-	TemplateString string
-	Name           string
-	EmbedFilePath  string
-	Structs        []StructDef
+	TemplateString   string
+	TemplateFilePath string
+	Name             string
+	EmbedFilePath    string
+	Structs          []StructDef
 }
 
 type StructDef struct {
@@ -82,10 +83,11 @@ func ParseTemplate(templatePath, packageName string) (*GoHTML, error) {
 		}
 
 		data.Templates = append(data.Templates, Template{
-			TemplateString: nodeToString(subTemplate.Tree.Root),
-			Name:           strings.Title(strings.TrimSuffix(subTemplate.Name(), ".gohtml")),
-			EmbedFilePath:  tmpl.Name(),
-			Structs:        structs,
+			TemplateString:   nodeToString(subTemplate.Tree.Root),
+			TemplateFilePath: templatePath,
+			Name:             strings.Title(strings.TrimSuffix(subTemplate.Name(), ".gohtml")),
+			EmbedFilePath:    tmpl.Name(),
+			Structs:          structs,
 		})
 	}
 

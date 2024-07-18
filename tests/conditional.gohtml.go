@@ -49,7 +49,7 @@ func RenderConditional(w io.Writer, data ConditionalData) error {
 	tmpl := ConditionalTemplate
 	if LiveReload {
 		var err error
-		tmpl, err = template.ParseFiles("example/template/conditional.gohtml")
+		tmpl, err = template.ParseFiles("tests/conditional.gohtml")
 		if err != nil {
 			return err
 		}

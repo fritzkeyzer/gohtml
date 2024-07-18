@@ -71,7 +71,7 @@ func RenderNested(w io.Writer, data NestedData) error {
 	tmpl := NestedTemplate
 	if LiveReload {
 		var err error
-		tmpl, err = template.ParseFiles("example/template/conditional.gohtml")
+		tmpl, err = template.ParseFiles("tests/nested.gohtml")
 		if err != nil {
 			return err
 		}
