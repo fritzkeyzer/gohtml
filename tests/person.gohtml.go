@@ -66,7 +66,7 @@ func RenderPerson(w io.Writer, data PersonData) error {
 	tmpl := PersonTemplate
 	if LiveReload {
 		var err error
-		tmpl, err = template.ParseFiles("example/template/conditional.gohtml")
+		tmpl, err = template.ParseFiles("tests/person.gohtml")
 		if err != nil {
 			return err
 		}

@@ -61,7 +61,7 @@ func RenderLoops(w io.Writer, data LoopsData) error {
 	tmpl := LoopsTemplate
 	if LiveReload {
 		var err error
-		tmpl, err = template.ParseFiles("example/template/conditional.gohtml")
+		tmpl, err = template.ParseFiles("tests/loops.gohtml")
 		if err != nil {
 			return err
 		}

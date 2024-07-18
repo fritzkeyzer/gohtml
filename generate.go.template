@@ -48,7 +48,7 @@ func Render{{.Name}}(w io.Writer{{ if .Structs}}, data {{.Name}}Data{{end}}) err
 	tmpl := {{.Name}}Template
 	if LiveReload {
 		var err error
-		tmpl, err = template.ParseFiles({{.FilePath}})
+		tmpl, err = template.ParseFiles("{{.TemplateFilePath}}")
 		if err != nil {
 			return err
 		}

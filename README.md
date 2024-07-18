@@ -55,7 +55,7 @@ Feel free to post issues - or if you're able to - fix it and submit a PR!
 
 # Changelog
 
-### v0.0.4
+### v0.0.4, v0.0.5
 - Fix generated filepath bug
 
 ### v0.0.3

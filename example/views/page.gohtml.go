@@ -57,7 +57,7 @@ func RenderPage(w io.Writer, data PageData) error {
 	tmpl := PageTemplate
 	if LiveReload {
 		var err error
-		tmpl, err = template.ParseFiles("example/template/conditional.gohtml")
+		tmpl, err = template.ParseFiles("example/views/page.gohtml")
 		if err != nil {
 			return err
 		}
