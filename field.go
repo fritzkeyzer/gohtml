@@ -18,7 +18,13 @@ func extractTemplateFields(templateName string, t *template.Template) []Field {
 	for _, node := range t.Tree.Root.Nodes {
 		fields = append(fields, parseNode([]string{templateName}, node)...)
 	}
-	
+
+	for i := range fields {
+		if len(fields[i].Path) == 0 {
+			fields[i].Path = []string{templateName}
+		}
+	}
+
 	return fields
 }
 
@@ -28,10 +34,17 @@ func parseNode(path []string, node parse.Node) []Field {
 	case *parse.ActionNode:
 		fields = []Field{parseActionNodeField(path, n.Pipe.String())}
 	case *parse.IfNode:
-		fields = []Field{parseActionNodeField(path, n.Pipe.String())}
+		ifNode := parseActionNodeField(path, n.Pipe.String())
+		fields = []Field{ifNode}
+
+		for _, n := range n.List.Nodes {
+			childFields := parseNode(path, n)
+			fields = append(fields, childFields...)
+		}
+
 	case *parse.RangeNode:
 		rangeField := parseRangeNodeField(path, n.Pipe.String())
-		fields = append(fields, rangeField)
+		fields = []Field{rangeField}
 
 		rangeFieldType := strings.TrimPrefix(rangeField.Type, "[]")
 
@@ -49,7 +62,13 @@ func parseActionNodeField(path []string, pipe string) Field {
 		fmt.Printf("parsing action node {{%s}} with path: %v\n", pipe, path)
 	}
 
-	// in the case of named range variables, eg: {{$link.Name}}
+	// root context variables
+	isRoot := false
+	if strings.HasPrefix(pipe, "$.") {
+		isRoot = true
+	}
+
+	// loop variables iterator references
 	if strings.HasPrefix(pipe, "$") {
 		pipe = strings.TrimLeft(pipe, "$ ")
 		split := strings.Split(pipe, ".")
@@ -66,6 +85,10 @@ func parseActionNodeField(path []string, pipe string) Field {
 	}
 
 	path = append(path, parts[:len(parts)-1]...)
+
+	if isRoot {
+		path = nil
+	}
 
 	// the last part - is a field of type any
 	return Field{

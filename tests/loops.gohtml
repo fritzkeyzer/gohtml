@@ -1,5 +1,5 @@
 {{range .Widgets}}
-    {{.Name}} - {{.Price}}
+    {{$.Currency}} {{.Price}} - {{.Name}}
 {{end}}
 
 {{range $link := .Socials}}

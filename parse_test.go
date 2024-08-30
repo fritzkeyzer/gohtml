@@ -3,7 +3,8 @@ package gohtml
 import (
 	"testing"
 
-	"github.com/maxatome/go-testdeep/td"
+	"github.com/k0kubun/pp/v3"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestParseTemplate(t *testing.T) {
@@ -23,9 +24,10 @@ func TestParseTemplate(t *testing.T) {
 				PackageName: "tests",
 				Templates: []Template{
 					{
-						Name:           "Basic",
-						EmbedFilePath:  "basic.gohtml",
-						TemplateString: "<h1>Hello {{.Name}}</h1>\n<footer>Today's date is {{.Date}}</footer>\n",
+						Name:             "Basic",
+						TemplateFilePath: "tests/basic.gohtml",
+						EmbedFilePath:    "basic.gohtml",
+						TemplateString:   "<h1>Hello {{.Name}}</h1>\n<footer>Today's date is {{.Date}}</footer>\n",
 						Structs: []StructDef{
 							{
 								Name: "BasicData",
@@ -34,8 +36,7 @@ func TestParseTemplate(t *testing.T) {
 										Path: []string{"Basic"},
 										Name: "Name",
 										Type: "any",
-									},
-									{
+									}, {
 										Path: []string{"Basic"},
 										Name: "Date",
 										Type: "any",
@@ -56,9 +57,10 @@ func TestParseTemplate(t *testing.T) {
 				PackageName: "tests",
 				Templates: []Template{
 					{
-						Name:           "Conditional",
-						EmbedFilePath:  "conditional.gohtml",
-						TemplateString: "<button>\n    {{if .SignedIn}}\n        Sign Out\n    {{end}}\n</button>\n",
+						Name:             "Conditional",
+						EmbedFilePath:    "conditional.gohtml",
+						TemplateFilePath: "tests/conditional.gohtml",
+						TemplateString:   "<button>\n    {{if .SignedIn}}\n        Hello {{.Username}}\n    {{end}}\n</button>\n",
 						Structs: []StructDef{
 							{
 								Name: "ConditionalData",
@@ -66,6 +68,11 @@ func TestParseTemplate(t *testing.T) {
 									{
 										Path: []string{"Conditional"},
 										Name: "SignedIn",
+										Type: "any",
+									},
+									{
+										Path: []string{"Conditional"},
+										Name: "Username",
 										Type: "any",
 									},
 								},
@@ -84,9 +91,10 @@ func TestParseTemplate(t *testing.T) {
 				PackageName: "tests",
 				Templates: []Template{
 					{
-						Name:           "Nested",
-						EmbedFilePath:  "nested.gohtml",
-						TemplateString: "<h1>{{.Organisation.Name}}</h1>\n<p>{{.Organisation.Founded}}</p>\n<div>\n    <p>{{.Employee.Personal.Address.Street}}</p>\n    <p>{{.Employee.Personal.Address.City}}</p>\n    <p>{{.Employee.Personal.Address.Country}}</p>\n</div>\n",
+						Name:             "Nested",
+						EmbedFilePath:    "nested.gohtml",
+						TemplateFilePath: "tests/nested.gohtml",
+						TemplateString:   "<h1>{{.Organisation.Name}}</h1>\n<p>{{.Organisation.Founded}}</p>\n<div>\n    <p>{{.Employee.Personal.Address.Street}}</p>\n    <p>{{.Employee.Personal.Address.City}}</p>\n    <p>{{.Employee.Personal.Address.Country}}</p>\n</div>\n",
 						Structs: []StructDef{
 							{
 								Name: "NestedData",
@@ -164,9 +172,10 @@ func TestParseTemplate(t *testing.T) {
 				PackageName: "tests",
 				Templates: []Template{
 					{
-						Name:           "Person",
-						EmbedFilePath:  "person.gohtml",
-						TemplateString: "<p>Name: {{.Name}}</p>\n<p>Age: {{.Age}}</p>\n<p>Phone: {{.Contact.Phone}}</p>\n<p>Email: {{.Contact.Email}}</p>\n<ul>\n    {{range $link := .Socials}}\n        <li>{{$link.Name}} {{$link.Href}}</li>\n    {{end}}\n</ul>\n",
+						Name:             "Person",
+						EmbedFilePath:    "person.gohtml",
+						TemplateFilePath: "tests/person.gohtml",
+						TemplateString:   "<p>Name: {{.Name}}</p>\n<p>Age: {{.Age}}</p>\n<p>Phone: {{.Contact.Phone}}</p>\n<p>Email: {{.Contact.Email}}</p>\n<ul>\n    {{range $link := .Socials}}\n        <li>{{$link.Name}} {{$link.Href}}</li>\n    {{end}}\n</ul>\n",
 						Structs: []StructDef{
 							{
 								Name: "PersonData",
@@ -209,8 +218,7 @@ func TestParseTemplate(t *testing.T) {
 										Path: []string{"PersonSocialsLink"},
 										Name: "Name",
 										Type: "any",
-									},
-									{
+									}, {
 										Path: []string{"PersonSocialsLink"},
 										Name: "Href",
 										Type: "any",
@@ -231,9 +239,10 @@ func TestParseTemplate(t *testing.T) {
 				PackageName: "tests",
 				Templates: []Template{
 					{
-						Name:           "Loops",
-						EmbedFilePath:  "loops.gohtml",
-						TemplateString: "{{range .Widgets}}\n    {{.Name}} - {{.Price}}\n{{end}}\n\n{{range $link := .Socials}}\n    {{$link.Name}} {{$link.Href}}\n{{end}}",
+						Name:             "Loops",
+						EmbedFilePath:    "loops.gohtml",
+						TemplateFilePath: "tests/loops.gohtml",
+						TemplateString:   "{{range .Widgets}}\n    {{$.Currency}} {{.Price}} - {{.Name}}\n{{end}}\n\n{{range $link := .Socials}}\n    {{$link.Name}} {{$link.Href}}\n{{end}}\n",
 						Structs: []StructDef{
 							{
 								Name: "LoopsData",
@@ -242,6 +251,10 @@ func TestParseTemplate(t *testing.T) {
 										Path: []string{"Loops"},
 										Name: "Widgets",
 										Type: "[]LoopsWidget",
+									}, {
+										Path: []string{"Loops"},
+										Name: "Currency",
+										Type: "any",
 									}, {
 										Path: []string{"Loops"},
 										Name: "Socials",
@@ -266,11 +279,11 @@ func TestParseTemplate(t *testing.T) {
 								Fields: []Field{
 									{
 										Path: []string{"LoopsWidget"},
-										Name: "Name",
+										Name: "Price",
 										Type: "any",
 									}, {
 										Path: []string{"LoopsWidget"},
-										Name: "Price",
+										Name: "Name",
 										Type: "any",
 									},
 								},
@@ -293,7 +306,12 @@ func TestParseTemplate(t *testing.T) {
 				t.Error("ParseTemplate returned nil")
 				return
 			}
-			td.Cmp(t, *got, tt.Want)
+
+			//td.Cmp(t, *got, tt.Want)
+			if !assert.Equal(t, &tt.Want, got) {
+				t.Log("Got:")
+				pp.Println(got)
+			}
 		})
 	}
 }

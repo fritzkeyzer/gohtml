@@ -1,7 +1,8 @@
 package main
 
 import (
-	"os"
+	"bytes"
+	"fmt"
 
 	"github.com/fritzkeyzer/gohtml/example/views"
 )
@@ -32,11 +33,18 @@ func main() {
 
 	// render another template to Stdout (this would typically be an http.ResponseWriter)
 	// notice how we inject an html fragment from one component into another
-	_ = views.RenderPage(os.Stdout, views.PageData{
+	buf := new(bytes.Buffer)
+	err := views.RenderPage(buf, views.PageData{
 		Title:       "Hello world",
 		Description: "Example page",
+		SignedIn:    true,
+		Username:    "Bob",
 		Body:        bodyHTML,
 	})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(buf.String())
 }
 
 /* Output:

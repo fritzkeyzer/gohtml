@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-// --- START TEMPLATE: Page
+// <<< START TEMPLATE: Page
 
 var rawPageTemplate =
 // language=gotemplate
@@ -24,6 +24,9 @@ var rawPageTemplate =
     <meta name="description" content="{{.Description}}">
 </head>
 <body>
+<div>
+    {{if .SignedIn}}<p>Hello {{.Username}}</p>{{end}}
+</div>
 {{.Body}}
 </body>
 </html>`
@@ -33,10 +36,12 @@ var PageTemplate = template.Must(template.New("Page").Parse(rawPageTemplate))
 type PageData struct {
 	Title       any
 	Description any
+	SignedIn    any
+	Username    any
 	Body        any
 }
 
-// Page renders the "Page" template as an HTML fragment
+// Page renders the page.gohtml template as an HTML fragment
 func Page(data PageData) template.HTML {
 	buf := new(bytes.Buffer)
 	err := RenderPage(buf, data)
@@ -47,17 +52,13 @@ func Page(data PageData) template.HTML {
 	return template.HTML(buf.String())
 }
 
-// RenderPage renders the "Page" template to the specified writer.
-// If the writer is of the type http.ResponseWriter - the content-type header is set to "text/html; charset=utf-8"
+// RenderPage renders the page.gohtml template to the specified writer.
+// For writing to an http.ResponseWriter - use RenderPageHTTP instead.
 func RenderPage(w io.Writer, data PageData) error {
-	if hw, ok := w.(http.ResponseWriter); ok {
-		hw.Header().Set("Content-Type", "text/html; charset=utf-8")
-	}
-
 	tmpl := PageTemplate
 	if LiveReload {
 		var err error
-		tmpl, err = template.ParseFiles("example/views/page.gohtml")
+		tmpl, err = template.ParseFiles("views/page.gohtml")
 		if err != nil {
 			return err
 		}
@@ -66,4 +67,20 @@ func RenderPage(w io.Writer, data PageData) error {
 	return tmpl.Execute(w, data)
 }
 
-// --- END TEMPLATE: Page
+// RenderPageHTTP renders the page.gohtml template to the http.ResponseWriter.
+// Errors are handled with the package global views.ErrorFn function (which can be customized) and returned.
+// You can choose to handle errors with the views.ErrorFn handler, the returned error, or both.
+func RenderPageHTTP(w http.ResponseWriter, data PageData) error {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	buf := new(bytes.Buffer)
+	err := RenderPage(buf, data)
+	if err != nil {
+		ErrorFn(w, err)
+		return err
+	}
+
+	return nil
+}
+
+// >>> END TEMPLATE: Page

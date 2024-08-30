@@ -11,13 +11,13 @@ import (
 	"net/http"
 )
 
-// --- START TEMPLATE: Conditional
+// <<< START TEMPLATE: Conditional
 
 var rawConditionalTemplate =
 // language=gotemplate
 `<button>
     {{if .SignedIn}}
-        Sign Out
+        Hello {{.Username}}
     {{end}}
 </button>
 `
@@ -26,9 +26,10 @@ var ConditionalTemplate = template.Must(template.New("Conditional").Parse(rawCon
 
 type ConditionalData struct {
 	SignedIn any
+	Username any
 }
 
-// Conditional renders the "Conditional" template as an HTML fragment
+// Conditional renders the conditional.gohtml template as an HTML fragment
 func Conditional(data ConditionalData) template.HTML {
 	buf := new(bytes.Buffer)
 	err := RenderConditional(buf, data)
@@ -39,13 +40,9 @@ func Conditional(data ConditionalData) template.HTML {
 	return template.HTML(buf.String())
 }
 
-// RenderConditional renders the "Conditional" template to the specified writer.
-// If the writer is of the type http.ResponseWriter - the content-type header is set to "text/html; charset=utf-8"
+// RenderConditional renders the conditional.gohtml template to the specified writer.
+// For writing to an http.ResponseWriter - use RenderConditionalHTTP instead.
 func RenderConditional(w io.Writer, data ConditionalData) error {
-	if hw, ok := w.(http.ResponseWriter); ok {
-		hw.Header().Set("Content-Type", "text/html; charset=utf-8")
-	}
-
 	tmpl := ConditionalTemplate
 	if LiveReload {
 		var err error
@@ -58,4 +55,20 @@ func RenderConditional(w io.Writer, data ConditionalData) error {
 	return tmpl.Execute(w, data)
 }
 
-// --- END TEMPLATE: Conditional
+// RenderConditionalHTTP renders the conditional.gohtml template to the http.ResponseWriter.
+// Errors are handled with the package global tests.ErrorFn function (which can be customized) and returned.
+// You can choose to handle errors with the tests.ErrorFn handler, the returned error, or both.
+func RenderConditionalHTTP(w http.ResponseWriter, data ConditionalData) error {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	buf := new(bytes.Buffer)
+	err := RenderConditional(buf, data)
+	if err != nil {
+		ErrorFn(w, err)
+		return err
+	}
+
+	return nil
+}
+
+// >>> END TEMPLATE: Conditional

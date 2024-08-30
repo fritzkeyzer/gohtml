@@ -1,4 +1,4 @@
-package config
+package gohtml
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ type Dir struct {
 	OutputTemplateFileName string `yaml:"output_template_file_name"`
 }
 
-func Parse(path string) (*Config, error) {
+func ParseCfg(path string) (*Config, error) {
 	file, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("reading config file: %w", err)
@@ -37,6 +37,9 @@ func Parse(path string) (*Config, error) {
 	for i := range cfg.Dirs {
 		if cfg.Dirs[i].OutputFilesSuffix == "" {
 			cfg.Dirs[i].OutputFilesSuffix = ".go"
+		}
+		if cfg.Dirs[i].OutputTemplateFileName == "" {
+			cfg.Dirs[i].OutputTemplateFileName = "gohtml.gen.go"
 		}
 		if cfg.Dirs[i].PackageName == "" {
 			cfg.Dirs[i].PackageName = filepath.Base(cfg.Dirs[i].Path)

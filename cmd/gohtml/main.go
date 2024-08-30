@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/fritzkeyzer/gohtml"
-	"github.com/fritzkeyzer/gohtml/config"
 	"github.com/k0kubun/pp/v3"
 )
 
@@ -24,7 +23,7 @@ func main() {
 		*verboseFlag = true
 	}
 
-	cfg, err := config.Parse(*cfgFlag)
+	cfg, err := gohtml.ParseCfg(*cfgFlag)
 	if err != nil {
 		panic(err)
 	}
@@ -44,7 +43,7 @@ func main() {
 	}
 }
 
-func run(c config.Dir) {
+func run(c gohtml.Dir) {
 	var files []string
 	files, err := filepath.Glob(filepath.Join(c.Path, "*.gohtml"))
 	if err != nil {
@@ -99,6 +98,6 @@ func run(c config.Dir) {
 	}
 
 	if len(files) > 0 {
-		gohtml.GohtmlFile(c.Path)
+		gohtml.GohtmlFile(c.Path, c.OutputTemplateFileName)
 	}
 }

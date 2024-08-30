@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-// --- START TEMPLATE: Basic
+// <<< START TEMPLATE: Basic
 
 var rawBasicTemplate =
 // language=gotemplate
@@ -26,7 +26,7 @@ type BasicData struct {
 	Date any
 }
 
-// Basic renders the "Basic" template as an HTML fragment
+// Basic renders the basic.gohtml template as an HTML fragment
 func Basic(data BasicData) template.HTML {
 	buf := new(bytes.Buffer)
 	err := RenderBasic(buf, data)
@@ -37,13 +37,9 @@ func Basic(data BasicData) template.HTML {
 	return template.HTML(buf.String())
 }
 
-// RenderBasic renders the "Basic" template to the specified writer.
-// If the writer is of the type http.ResponseWriter - the content-type header is set to "text/html; charset=utf-8"
+// RenderBasic renders the basic.gohtml template to the specified writer.
+// For writing to an http.ResponseWriter - use RenderBasicHTTP instead.
 func RenderBasic(w io.Writer, data BasicData) error {
-	if hw, ok := w.(http.ResponseWriter); ok {
-		hw.Header().Set("Content-Type", "text/html; charset=utf-8")
-	}
-
 	tmpl := BasicTemplate
 	if LiveReload {
 		var err error
@@ -56,4 +52,20 @@ func RenderBasic(w io.Writer, data BasicData) error {
 	return tmpl.Execute(w, data)
 }
 
-// --- END TEMPLATE: Basic
+// RenderBasicHTTP renders the basic.gohtml template to the http.ResponseWriter.
+// Errors are handled with the package global tests.ErrorFn function (which can be customized) and returned.
+// You can choose to handle errors with the tests.ErrorFn handler, the returned error, or both.
+func RenderBasicHTTP(w http.ResponseWriter, data BasicData) error {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	buf := new(bytes.Buffer)
+	err := RenderBasic(buf, data)
+	if err != nil {
+		ErrorFn(w, err)
+		return err
+	}
+
+	return nil
+}
+
+// >>> END TEMPLATE: Basic

@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-// --- START TEMPLATE: Nested
+// <<< START TEMPLATE: Nested
 
 var rawNestedTemplate =
 // language=gotemplate
@@ -50,7 +50,7 @@ type NestedOrganisation struct {
 	Founded any
 }
 
-// Nested renders the "Nested" template as an HTML fragment
+// Nested renders the nested.gohtml template as an HTML fragment
 func Nested(data NestedData) template.HTML {
 	buf := new(bytes.Buffer)
 	err := RenderNested(buf, data)
@@ -61,13 +61,9 @@ func Nested(data NestedData) template.HTML {
 	return template.HTML(buf.String())
 }
 
-// RenderNested renders the "Nested" template to the specified writer.
-// If the writer is of the type http.ResponseWriter - the content-type header is set to "text/html; charset=utf-8"
+// RenderNested renders the nested.gohtml template to the specified writer.
+// For writing to an http.ResponseWriter - use RenderNestedHTTP instead.
 func RenderNested(w io.Writer, data NestedData) error {
-	if hw, ok := w.(http.ResponseWriter); ok {
-		hw.Header().Set("Content-Type", "text/html; charset=utf-8")
-	}
-
 	tmpl := NestedTemplate
 	if LiveReload {
 		var err error
@@ -80,4 +76,20 @@ func RenderNested(w io.Writer, data NestedData) error {
 	return tmpl.Execute(w, data)
 }
 
-// --- END TEMPLATE: Nested
+// RenderNestedHTTP renders the nested.gohtml template to the http.ResponseWriter.
+// Errors are handled with the package global tests.ErrorFn function (which can be customized) and returned.
+// You can choose to handle errors with the tests.ErrorFn handler, the returned error, or both.
+func RenderNestedHTTP(w http.ResponseWriter, data NestedData) error {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	buf := new(bytes.Buffer)
+	err := RenderNested(buf, data)
+	if err != nil {
+		ErrorFn(w, err)
+		return err
+	}
+
+	return nil
+}
+
+// >>> END TEMPLATE: Nested

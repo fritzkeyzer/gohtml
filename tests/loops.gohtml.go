@@ -11,23 +11,25 @@ import (
 	"net/http"
 )
 
-// --- START TEMPLATE: Loops
+// <<< START TEMPLATE: Loops
 
 var rawLoopsTemplate =
 // language=gotemplate
 `{{range .Widgets}}
-    {{.Name}} - {{.Price}}
+    {{$.Currency}} {{.Price}} - {{.Name}}
 {{end}}
 
 {{range $link := .Socials}}
     {{$link.Name}} {{$link.Href}}
-{{end}}`
+{{end}}
+`
 
 var LoopsTemplate = template.Must(template.New("Loops").Parse(rawLoopsTemplate))
 
 type LoopsData struct {
-	Widgets []LoopsWidget
-	Socials []LoopsSocialsLink
+	Widgets  []LoopsWidget
+	Currency any
+	Socials  []LoopsSocialsLink
 }
 
 type LoopsSocialsLink struct {
@@ -36,11 +38,11 @@ type LoopsSocialsLink struct {
 }
 
 type LoopsWidget struct {
-	Name  any
 	Price any
+	Name  any
 }
 
-// Loops renders the "Loops" template as an HTML fragment
+// Loops renders the loops.gohtml template as an HTML fragment
 func Loops(data LoopsData) template.HTML {
 	buf := new(bytes.Buffer)
 	err := RenderLoops(buf, data)
@@ -51,13 +53,9 @@ func Loops(data LoopsData) template.HTML {
 	return template.HTML(buf.String())
 }
 
-// RenderLoops renders the "Loops" template to the specified writer.
-// If the writer is of the type http.ResponseWriter - the content-type header is set to "text/html; charset=utf-8"
+// RenderLoops renders the loops.gohtml template to the specified writer.
+// For writing to an http.ResponseWriter - use RenderLoopsHTTP instead.
 func RenderLoops(w io.Writer, data LoopsData) error {
-	if hw, ok := w.(http.ResponseWriter); ok {
-		hw.Header().Set("Content-Type", "text/html; charset=utf-8")
-	}
-
 	tmpl := LoopsTemplate
 	if LiveReload {
 		var err error
@@ -70,4 +68,20 @@ func RenderLoops(w io.Writer, data LoopsData) error {
 	return tmpl.Execute(w, data)
 }
 
-// --- END TEMPLATE: Loops
+// RenderLoopsHTTP renders the loops.gohtml template to the http.ResponseWriter.
+// Errors are handled with the package global tests.ErrorFn function (which can be customized) and returned.
+// You can choose to handle errors with the tests.ErrorFn handler, the returned error, or both.
+func RenderLoopsHTTP(w http.ResponseWriter, data LoopsData) error {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	buf := new(bytes.Buffer)
+	err := RenderLoops(buf, data)
+	if err != nil {
+		ErrorFn(w, err)
+		return err
+	}
+
+	return nil
+}
+
+// >>> END TEMPLATE: Loops

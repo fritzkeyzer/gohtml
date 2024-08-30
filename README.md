@@ -1,17 +1,37 @@
 # GOHTML
 Generate type-safe wrapper code for html text templates.
 
+> More documentation can be found in the `docs` directory
+
+# Features
+- Functions to render templates
+  - To string (technically template.HTML)
+  - To io.Writer
+  - To http.ResponseWriter
+- Generated types for each template based on static analysis. Supports: 
+  - variables
+  - loops
+  - conditionals
+- Hot-reloading for local development
+  - Templates are loaded from disk allowing for immediate changes to reflect
+  - Types can be re-generated whenever changes are detected, by using a file watcher to call `gohtml`
+- Error handling
+  - Customisable error handler with default
+
 # Install
 ```sh
 go install github.com/fritzkeyzer/gohtml/cmd/gohtml@latest
 ```
 
 # Usage
-```sh
-gohtml
-# or specify a config file:
-gohtml -c frontend/templates/gohtml.yaml
-```
+1. Create a `gohtml.yaml` config file, eg:
+   ```yaml
+    version: "0"
+    directories:
+    - path: "app/page"
+    - path: "app/partial"
+    ```
+2. Run `gothml` optionally use the `-c` flag to specify a file (defaults to `gohtml.yaml` in the same directory)
 
 # Examples
 See a full example in the example directory.
@@ -54,6 +74,11 @@ Versions prior to v1 have no compatibility guarantees.
 Feel free to post issues - or if you're able to - fix it and submit a PR!
 
 # Changelog
+
+### v0.0.6
+- Support `$` root context selector 
+- Fix variables nested within conditionals bug
+- Add RenderHTTP function with configurable error handler
 
 ### v0.0.4, v0.0.5
 - Fix generated filepath bug

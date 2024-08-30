@@ -1,5 +1,4 @@
-package views
-
+package {{.PackageName}}
 import "net/http"
 
 // LiveReload set to true will cause template files to be loaded from disk when functions are called.
@@ -9,5 +8,5 @@ var LiveReload bool
 // ErrorFn is called when an RenderHTTP function encounters an error.
 // This function be overridden to add custom error responses, logging, error reporting etc.
 var ErrorFn = func(w http.ResponseWriter, err error) {
-	http.Error(w, err.Error(), http.StatusInternalServerError)
+    http.Error(w, err.Error(), http.StatusInternalServerError)
 }

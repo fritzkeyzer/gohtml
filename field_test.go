@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/k0kubun/pp/v3"
 	"github.com/maxatome/go-testdeep/td"
 	"github.com/stretchr/testify/assert"
 )
@@ -25,15 +26,13 @@ func Test_extractTemplateFields(t *testing.T) {
 					Path: []string{"Basic"},
 					Name: "Name",
 					Type: "any",
-				},
-				{
+				}, {
 					Path: []string{"Basic"},
 					Name: "Date",
 					Type: "any",
 				},
 			},
-		},
-		{
+		}, {
 			TemplateFile: "tests/conditional.gohtml",
 			TemplateName: "Conditional",
 			Want: []Field{
@@ -41,10 +40,13 @@ func Test_extractTemplateFields(t *testing.T) {
 					Path: []string{"Conditional"},
 					Name: "SignedIn",
 					Type: "any",
+				}, {
+					Path: []string{"Conditional"},
+					Name: "Username",
+					Type: "any",
 				},
 			},
-		},
-		{
+		}, {
 			TemplateFile: "tests/loops.gohtml",
 			TemplateName: "Loops",
 			Want: []Field{
@@ -52,35 +54,33 @@ func Test_extractTemplateFields(t *testing.T) {
 					Path: []string{"Loops"},
 					Name: "Widgets",
 					Type: "[]LoopsWidget",
-				},
-				{
-					Path: []string{"LoopsWidget"},
-					Name: "Name",
+				}, {
+					Path: []string{"Loops"},
+					Name: "Currency",
 					Type: "any",
-				},
-				{
+				}, {
 					Path: []string{"LoopsWidget"},
 					Name: "Price",
 					Type: "any",
-				},
-				{
+				}, {
+					Path: []string{"LoopsWidget"},
+					Name: "Name",
+					Type: "any",
+				}, {
 					Path: []string{"Loops"},
 					Name: "Socials",
 					Type: "[]LoopsSocialsLink",
-				},
-				{
+				}, {
 					Path: []string{"LoopsSocialsLink"},
 					Name: "Name",
 					Type: "any",
-				},
-				{
+				}, {
 					Path: []string{"LoopsSocialsLink"},
 					Name: "Href",
 					Type: "any",
 				},
 			},
-		},
-		{
+		}, {
 			TemplateFile: "tests/nested.gohtml",
 			TemplateName: "Nested",
 			Want: []Field{
@@ -88,30 +88,25 @@ func Test_extractTemplateFields(t *testing.T) {
 					Path: []string{"Nested", "Organisation"},
 					Name: "Name",
 					Type: "any",
-				},
-				{
+				}, {
 					Path: []string{"Nested", "Organisation"},
 					Name: "Founded",
 					Type: "any",
-				},
-				{
+				}, {
 					Path: []string{"Nested", "Employee", "Personal", "Address"},
 					Name: "Street",
 					Type: "any",
-				},
-				{
+				}, {
 					Path: []string{"Nested", "Employee", "Personal", "Address"},
 					Name: "City",
 					Type: "any",
-				},
-				{
+				}, {
 					Path: []string{"Nested", "Employee", "Personal", "Address"},
 					Name: "Country",
 					Type: "any",
 				},
 			},
-		},
-		{
+		}, {
 			TemplateFile: "tests/person.gohtml",
 			TemplateName: "Person",
 			Want: []Field{
@@ -119,33 +114,27 @@ func Test_extractTemplateFields(t *testing.T) {
 					Path: []string{"Person"},
 					Name: "Name",
 					Type: "any",
-				},
-				{
+				}, {
 					Path: []string{"Person"},
 					Name: "Age",
 					Type: "any",
-				},
-				{
+				}, {
 					Path: []string{"Person", "Contact"},
 					Name: "Phone",
 					Type: "any",
-				},
-				{
+				}, {
 					Path: []string{"Person", "Contact"},
 					Name: "Email",
 					Type: "any",
-				},
-				{
+				}, {
 					Path: []string{"Person"},
 					Name: "Socials",
 					Type: "[]PersonSocialsLink",
-				},
-				{
+				}, {
 					Path: []string{"PersonSocialsLink"},
 					Name: "Name",
 					Type: "any",
-				},
-				{
+				}, {
 					Path: []string{"PersonSocialsLink"},
 					Name: "Href",
 					Type: "any",
@@ -160,7 +149,13 @@ func Test_extractTemplateFields(t *testing.T) {
 				return
 			}
 
-			td.Cmp(t, extractTemplateFields(tt.TemplateName, tmpl), tt.Want)
+			got := extractTemplateFields(tt.TemplateName, tmpl)
+
+			//td.Cmp(t, got, tt.Want)
+			if !assert.Equal(t, tt.Want, got) {
+				t.Log("Got:")
+				pp.Println(got)
+			}
 		})
 	}
 }
@@ -250,7 +245,8 @@ func Test_parseActionNodeField(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.args.pipe, func(t *testing.T) {
 			got := parseActionNodeField(tt.args.path, tt.args.pipe)
-			assert.Equal(t, tt.want, got)
+			//assert.Equal(t, tt.want, got)
+			td.Cmp(t, got, tt.want)
 		})
 	}
 }

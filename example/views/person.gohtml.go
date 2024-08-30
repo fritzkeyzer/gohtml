@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-// --- START TEMPLATE: Person
+// <<< START TEMPLATE: Person
 
 var rawPersonTemplate =
 // language=gotemplate
@@ -22,7 +22,8 @@ var rawPersonTemplate =
 <p>Email: {{.Contact.Email}}</p>
 <div>{{range $link := .Socials}}
         <a href="{{$link.Href}}">{{$link.Name}}</a>{{end}}
-</div>`
+</div>
+`
 
 var PersonTemplate = template.Must(template.New("Person").Parse(rawPersonTemplate))
 
@@ -43,7 +44,7 @@ type PersonSocialsLink struct {
 	Name any
 }
 
-// Person renders the "Person" template as an HTML fragment
+// Person renders the person.gohtml template as an HTML fragment
 func Person(data PersonData) template.HTML {
 	buf := new(bytes.Buffer)
 	err := RenderPerson(buf, data)
@@ -54,17 +55,13 @@ func Person(data PersonData) template.HTML {
 	return template.HTML(buf.String())
 }
 
-// RenderPerson renders the "Person" template to the specified writer.
-// If the writer is of the type http.ResponseWriter - the content-type header is set to "text/html; charset=utf-8"
+// RenderPerson renders the person.gohtml template to the specified writer.
+// For writing to an http.ResponseWriter - use RenderPersonHTTP instead.
 func RenderPerson(w io.Writer, data PersonData) error {
-	if hw, ok := w.(http.ResponseWriter); ok {
-		hw.Header().Set("Content-Type", "text/html; charset=utf-8")
-	}
-
 	tmpl := PersonTemplate
 	if LiveReload {
 		var err error
-		tmpl, err = template.ParseFiles("example/views/person.gohtml")
+		tmpl, err = template.ParseFiles("views/person.gohtml")
 		if err != nil {
 			return err
 		}
@@ -73,4 +70,20 @@ func RenderPerson(w io.Writer, data PersonData) error {
 	return tmpl.Execute(w, data)
 }
 
-// --- END TEMPLATE: Person
+// RenderPersonHTTP renders the person.gohtml template to the http.ResponseWriter.
+// Errors are handled with the package global views.ErrorFn function (which can be customized) and returned.
+// You can choose to handle errors with the views.ErrorFn handler, the returned error, or both.
+func RenderPersonHTTP(w http.ResponseWriter, data PersonData) error {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	buf := new(bytes.Buffer)
+	err := RenderPerson(buf, data)
+	if err != nil {
+		ErrorFn(w, err)
+		return err
+	}
+
+	return nil
+}
+
+// >>> END TEMPLATE: Person

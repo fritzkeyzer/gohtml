@@ -7,6 +7,9 @@
     <meta name="description" content="{{.Description}}">
 </head>
 <body>
+<div>
+    {{ if .SignedIn }}<p>Hello {{.Username}}</p>{{ end }}
+</div>
 {{.Body}}
 </body>
 </html>
