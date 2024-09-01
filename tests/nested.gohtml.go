@@ -89,6 +89,9 @@ func RenderNestedHTTP(w http.ResponseWriter, data NestedData) error {
 		return err
 	}
 
+	_, _ = w.Write(buf.Bytes())
+	w.WriteHeader(http.StatusOK)
+
 	return nil
 }
 

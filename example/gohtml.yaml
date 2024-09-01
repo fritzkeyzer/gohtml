@@ -1,5 +1,3 @@
 version: "0"
 directories:
   - path: "views"
-    output_files_suffix: ".go"
-    output_template_file_name: "gohtml.gen.go"

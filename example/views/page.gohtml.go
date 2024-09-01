@@ -80,6 +80,9 @@ func RenderPageHTTP(w http.ResponseWriter, data PageData) error {
 		return err
 	}
 
+	_, _ = w.Write(buf.Bytes())
+	w.WriteHeader(http.StatusOK)
+
 	return nil
 }
 

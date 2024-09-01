@@ -65,6 +65,9 @@ func RenderBasicHTTP(w http.ResponseWriter, data BasicData) error {
 		return err
 	}
 
+	_, _ = w.Write(buf.Bytes())
+	w.WriteHeader(http.StatusOK)
+
 	return nil
 }
 

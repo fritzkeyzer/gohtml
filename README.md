@@ -20,7 +20,7 @@ Generate type-safe wrapper code for html text templates.
 
 # Install
 ```sh
-go install github.com/fritzkeyzer/gohtml/cmd/gohtml@latest
+go install github.com/fritzkeyzer/gohtml/cmd/gohtml@v0.0.7
 ```
 
 # Usage
@@ -69,13 +69,15 @@ Versions prior to v1 have no compatibility guarantees.
 - [x] Cache parsed templates
 - [x] Option to specify generated suffix
 - [x] YAML config
+- [x] Support `$` root context selector
+- [x] RenderHTTP, with error handling
 
 # Contributing
 Feel free to post issues - or if you're able to - fix it and submit a PR!
 
 # Changelog
 
-### v0.0.6
+### v0.0.6, v0.0.7 
 - Support `$` root context selector 
 - Fix variables nested within conditionals bug
 - Add RenderHTTP function with configurable error handler

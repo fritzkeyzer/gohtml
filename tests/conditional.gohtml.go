@@ -68,6 +68,9 @@ func RenderConditionalHTTP(w http.ResponseWriter, data ConditionalData) error {
 		return err
 	}
 
+	_, _ = w.Write(buf.Bytes())
+	w.WriteHeader(http.StatusOK)
+
 	return nil
 }
 

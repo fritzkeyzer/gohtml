@@ -81,6 +81,9 @@ func RenderLoopsHTTP(w http.ResponseWriter, data LoopsData) error {
 		return err
 	}
 
+	_, _ = w.Write(buf.Bytes())
+	w.WriteHeader(http.StatusOK)
+
 	return nil
 }
 

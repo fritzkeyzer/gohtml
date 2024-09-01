@@ -84,6 +84,9 @@ func RenderPersonHTTP(w http.ResponseWriter, data PersonData) error {
 		return err
 	}
 
+	_, _ = w.Write(buf.Bytes())
+	w.WriteHeader(http.StatusOK)
+
 	return nil
 }
 

@@ -65,6 +65,9 @@ func Render{{.Name}}HTTP(w http.ResponseWriter{{ if .Structs}}, data {{.Name}}Da
 		ErrorFn(w, err)
 		return err
 	}
+	
+	_, _ = w.Write(buf.Bytes())
+	w.WriteHeader(http.StatusOK)
 
 	return nil
 }
