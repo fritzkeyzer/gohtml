@@ -81,7 +81,6 @@ func RenderPageHTTP(w http.ResponseWriter, data PageData) error {
 	}
 
 	_, _ = w.Write(buf.Bytes())
-	w.WriteHeader(http.StatusOK)
 
 	return nil
 }
