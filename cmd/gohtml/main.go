@@ -3,25 +3,21 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log/slog"
 	"os"
-	"path/filepath"
+	"path"
 
 	"github.com/fritzkeyzer/gohtml"
-	"github.com/k0kubun/pp/v3"
+	"github.com/fritzkeyzer/gohtml/logz"
 )
 
 var (
 	cfgFlag     = flag.String("c", "gohtml.yaml", "config file")
 	verboseFlag = flag.Bool("v", false, "verbose")
-	debugFlag   = flag.Bool("debug", false, "debug")
 )
 
 func main() {
 	flag.Parse()
-
-	if *debugFlag {
-		*verboseFlag = true
-	}
 
 	cfg, err := gohtml.ParseCfg(*cfgFlag)
 	if err != nil {
@@ -29,75 +25,43 @@ func main() {
 	}
 
 	if *verboseFlag {
-		pp.Println(cfg)
+		logz.Level = slog.LevelDebug
 	}
 
+	logz.Debug("Parsed config", "cfg", cfg)
+
 	if len(cfg.Dirs) == 0 {
-		fmt.Println("Config invalid")
-		pp.Println(cfg)
-		os.Exit(0)
+		logz.Error(nil, "no dirs configured", "cfg", cfg)
+		os.Exit(1)
 	}
 
 	for _, dir := range cfg.Dirs {
-		run(dir)
+
+		err = run(dir)
+		if err != nil {
+			logz.Error(err, "failed on directory", "directory", dir)
+			os.Exit(1)
+		}
 	}
 }
 
-func run(c gohtml.Dir) {
-	var files []string
-	files, err := filepath.Glob(filepath.Join(c.Path, "*.gohtml"))
+func run(dir gohtml.Dir) (err error) {
+	g, err := gohtml.ParseDir(dir.Path)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("parse: %w", err)
 	}
 
-	if *debugFlag {
-		fmt.Println("Found templates:", c.Path, pp.Sprint(files))
+	f, err := os.Create(path.Join(dir.Path, dir.OutputFileName))
+	if err != nil {
+		return fmt.Errorf("create output file: %w", err)
+	}
+	defer f.Close()
+	err = g.Generate(f)
+	if err != nil {
+		return fmt.Errorf("generate: %w", err)
 	}
 
-	for _, filePath := range files {
-		if *verboseFlag {
-			fmt.Println("Parsing file:", filePath)
-		}
-		gohtml.DebugFlag = *debugFlag
-		t, err := gohtml.ParseTemplate(filePath, c.PackageName)
-		if err != nil {
-			fmt.Println("ERROR:", err)
-			os.Exit(1)
-		}
+	logz.Info("Output file: " + path.Join(dir.Path, dir.OutputFileName))
 
-		if *verboseFlag {
-			fmt.Println("Parsed file:", filePath)
-			if *debugFlag {
-				pp.Println(t)
-				fmt.Println()
-			}
-		}
-
-		genFilePath := filePath + c.OutputFilesSuffix
-		file, err := os.Create(genFilePath)
-		if err != nil {
-			panic(err)
-		}
-		defer file.Close()
-
-		if *verboseFlag {
-			fmt.Println("Generating go file:", genFilePath)
-		}
-		err = t.Generate(file)
-		if err != nil {
-			fmt.Println("ERROR:", err)
-			fmt.Println("Parsed:", pp.Sprint(t))
-			os.Exit(1)
-		}
-		if *verboseFlag {
-			fmt.Println("Successfully generated:", genFilePath)
-			//jsonLog(t)
-			//fmt.Println()
-		}
-		file.Close()
-	}
-
-	if len(files) > 0 {
-		gohtml.GohtmlFile(c.Path, c.OutputTemplateFileName)
-	}
+	return nil
 }

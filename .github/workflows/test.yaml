@@ -1,0 +1,26 @@
+name: Go
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Test
+        run: go test -v ./...
+
+      - name: Run example
+        run: |
+          (cd example && go run ../cmd/gohtml/main.go) # run gohtml
+          (cd example && go run main.go)               # run example main.go

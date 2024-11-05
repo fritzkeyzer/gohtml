@@ -1,84 +1,99 @@
-# GOHTML
-Generate type-safe wrapper code for html text templates.
+# GoHTML
+Generate type-safe(ish) wrapper code for Go HTML templates.
 
-> More documentation can be found in the `docs` directory
+[![Version](https://img.shields.io/badge/version-v0.1.0-blue.svg)](https://github.com/fritzkeyzer/gohtml/tags)
 
-# Features
-- Functions to render templates
-  - To string (technically template.HTML)
-  - To io.Writer
-  - To http.ResponseWriter
-- Generated types for each template based on static analysis. Supports: 
-  - variables
-  - loops
-  - conditionals
-- Hot-reloading for local development
-  - Templates are loaded from disk allowing for immediate changes to reflect
-  - Types can be re-generated whenever changes are detected, by using a file watcher to call `gohtml`
-- Error handling
-  - Customisable error handler with default
+> Detailed documentation available in the `docs` directory
 
-# Install
+> Take a look at the `example` directory for a full example
+
+## Key Features
+
+### 🚀 Generated render functions
+  - Render templates partials `template.HTML`
+  - Render templates to `io.Writer` or `http.ResponseWriter`
+
+### 🔒 Type Safety
+  - Automatically generated Go types for each template.
+  - Supports variables, loops, conditionals and sub-templates via static analysis.
+
+### 💻 Developer Experience
+  - Hot-reloading: templates are loaded from disk during development, so changes reflect immediately.
+  - Combined with an IDE or external file-watcher, gohtml can re-run upon changes to template files.
+
+## Installation
 ```sh
-go install github.com/fritzkeyzer/gohtml/cmd/gohtml@v0.0.7
+go install github.com/fritzkeyzer/gohtml/cmd/gohtml@v0.1.0
 ```
 
-# Usage
-1. Create a `gohtml.yaml` config file, eg:
-   ```yaml
-    version: "0"
-    directories:
-    - path: "app/page"
-    - path: "app/partial"
-    ```
-2. Run `gothml` optionally use the `-c` flag to specify a file (defaults to `gohtml.yaml` in the same directory)
+## Quick start
 
-# Examples
-See a full example in the example directory.
-Also take a look at the tests directory as it demonstrates the range input-output capabilities.
+1. Create `gohtml.yaml`:
+```yaml
+version: "0.1.0"
+directories:
+  - path: "app/pages"
+  - path: "app/components"
+```
+2. Run generator
+```shell
+gohtml
+```
 
-`hello.gohtml`
+## Example
+`hello.gohtml`:
 ```gotemplate
 <h1>Hello {{.Name}}</h1>
 <p>{{.Message}}</p>
 ```
-
-Generates: `hello.gohtml.go` that includes this:
+Generated code:
 ```go
-type HelloData struct{
-	Name any
-	Message any
+type HelloData struct {
+    Name    any
+    Message any
 }
 
-// Hello renders the "Hello" template as an HTML fragment
 func Hello(data HelloData) template.HTML
-
-// RenderHello renders the "Hello" template to the specified writer
 func RenderHello(w io.Writer, data HelloData) error
 ```
 
-# V0
-This tool and library are still in development.
-Versions prior to v1 have no compatibility guarantees.
+## Development status
+⚠️ **Version 0.x.x**: API may change before v1.0
 
-# Roadmap
-- [ ] Support multiple template definitions within one file with. Including usage with args
-- [ ] Handle top level (unnamed) variables
-- [ ] Support templating JS: *.gojs
-- [ ] Support for remaining text template spec
-- [x] Cache parsed templates
-- [x] Option to specify generated suffix
-- [x] YAML config
-- [x] Support `$` root context selector
-- [x] RenderHTTP, with error handling
+### Roadmap
+- [ ] Go type annotations
+- [x] Multiple components per file
+- [x] Component reuse with typed variables
+- [x] Template caching
+- [x] Configurable output location
+- [x] YAML configuration
+- [x] Root context selector support
+- [x] HTTP rendering with error handling
 
-# Contributing
-Feel free to post issues - or if you're able to - fix it and submit a PR!
+### Known bugs
+- If a .gohtml file **only** contains sub templates, a render function (for the file) is still created even if it will do nothing
+
+## Contributing
+Issues and PRs welcome!
 
 # Changelog
 
-### v0.0.6, v0.0.7 
-- Support `$` root context selector 
+### v0.1.0
+- Fix generation for conditionals with operators (not, eq, etc)
+- Define multiple template components per file (sub-templates can be reused within the same package)
+    - Create: `{{define "component"}} ... {{end}}`
+    - Reuse: `{{template "component"}}`
+    - Use data: `{{template "person" .PersonData}}`
+- Generate a single file per directory: `gohtml.gen.go`
+- LiveReload with env var: `GOHTML_LIVERELOAD`
+    - Can be set manually if needed eg: `views.LiveReload = (env == "local")`)
+- CLI: improved debug logs
+- Updated logic for naming generated loop structs
+- Added a golden file test, that tests the entire `tests` directory
+- Removed RenderHTTP error handler
+
+### v0.0.6, v0.0.7
+- Support `$` root context selector
 - Fix variables nested within conditionals bug
 - Add RenderHTTP function with configurable error handler
 
@@ -92,7 +107,7 @@ Feel free to post issues - or if you're able to - fix it and submit a PR!
 - Apply standard go formatting to generated code
 
 ### v0.0.2
-- Added yaml config support. 
+- Added yaml config support.
 - By default, gohtml checks for a file alongside it: `gohtml.yaml` otherwise the config file can be specified with the `-c` flag.
 - The `-d` and `-f` flags have been removed in favour of using a config file.
 - Known issue: When generating types and a loop is involved - an unused type is generated. The failing test: `TestTemplate_Generate/tests/person.gohtml` captures this issue.
