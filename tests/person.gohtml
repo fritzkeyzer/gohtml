@@ -1,9 +1,0 @@
-<p>Name: {{.Name}}</p>
-<p>Age: {{.Age}}</p>
-<p>Phone: {{.Contact.Phone}}</p>
-<p>Email: {{.Contact.Email}}</p>
-<ul>
-    {{range $link := .Socials}}
-        <li>{{$link.Name}} {{$link.Href}}</li>
-    {{end}}
-</ul>

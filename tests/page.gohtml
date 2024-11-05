@@ -1,0 +1,33 @@
+{{define "baseLayout"}}
+    <html lang="en">
+    <head>
+        <title>{{.Title}}</title>
+        {{template "meta"}}
+        {{.Imports}}
+    </head>
+    <body>
+    {{.BodyScript}}
+    {{template "navbar" .Nav}}
+    {{.Content}}
+    </body>
+    </html>
+{{end}}
+
+{{define "meta"}}
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+{{end}}
+
+{{define "navbar"}}
+    <nav>
+        <p>{{ .Title}}</p>
+        {{range .Links}}
+            <a>{{.Name}}</a>
+            {{template "navLink" .Link}}
+        {{end}}
+    </nav>
+{{end}}
+
+{{define "navLink"}}
+    <a href="{{.Href}}">{{.Text}}</a>
+{{end}}

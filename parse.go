@@ -1,97 +1,76 @@
 package gohtml
 
 import (
-	"fmt"
 	"html/template"
-	"path/filepath"
-	"sort"
+	"slices"
 	"strings"
 
-	"github.com/k0kubun/pp/v3"
+	"github.com/fritzkeyzer/gohtml/logz"
 )
 
-var DebugFlag bool
+func ParseTemplateFile(tmpl *template.Template) (TemplateFile, error) {
+	name := strings.TrimSuffix(tmpl.Name(), ".gohtml")
+	name = strings.Title(name)
 
-type GoHTML struct {
-	Name        string
-	FilePath    string
-	PackageName string
-	Templates   []Template
-}
-
-type Template struct {
-	TemplateString   string
-	TemplateFilePath string
-	Name             string
-	EmbedFilePath    string
-	Structs          []StructDef
-}
-
-type StructDef struct {
-	Name   string
-	Fields []Field
-}
-
-func ParseTemplate(templatePath, packageName string) (*GoHTML, error) {
-	tmpl, err := template.ParseFiles(templatePath)
-	if err != nil {
-		return nil, fmt.Errorf("parse template file: %v", err)
+	parsed := TemplateFile{
+		Name: name,
 	}
 
-	templateName := strings.Title(strings.TrimSuffix(filepath.Base(templatePath), ".gohtml"))
+	logz.Debug("Parse template", "subTemplate.Name()", tmpl.Name())
+	subName := tmpl.Name()
+	if subName == tmpl.Name() {
+		subName = name
+	}
+	subName = strings.Title(subName)
 
-	data := &GoHTML{
-		Name:        templateName,
-		FilePath:    templatePath,
-		PackageName: packageName,
+	// get a list of all variables used in the template, by traversing the AST of the template
+	fields := extractTemplateFields(subName, tmpl)
+
+	// build structs from fields
+	var structs []StructDef
+	for _, f := range fields {
+		structs = addField(subName, structs, f)
 	}
 
-	for _, subTemplate := range tmpl.Templates() {
-		subName := subTemplate.Name()
-		if subName == tmpl.Name() {
-			subName = templateName
+	// rename base struct to ...Data
+	for i := range structs {
+		if structs[i].Name == subName {
+			structs[i].Name = subName + "Data"
 		}
-
-		// TODO check if the subTemplate has anything in it.
-		// the first sub-template could be empty in cases where a template file exclusively contains sub-templates
-
-		// get a list of all variables used in the template, by traversing the AST of the template
-		fields := extractTemplateFields(subName, subTemplate)
-		if DebugFlag {
-			fmt.Println("Parse fields from template:", templateName, pp.Sprint(fields))
-		}
-
-		var structs []StructDef
-		for _, f := range fields {
-			structs = addField(templateName, structs, f)
-		}
-
-		// sort structs
-		sort.Slice(structs, func(i, j int) bool {
-			if structs[i].Name == subName+"Data" {
-				return true
-			}
-			if structs[j].Name == subName+"Data" {
-				return false
-			}
-			return structs[i].Name < structs[j].Name
-		})
-
-		// rename base struct to ...Data
-		if len(structs) > 0 {
-			structs[0].Name += "Data"
-		}
-
-		data.Templates = append(data.Templates, Template{
-			TemplateString:   nodeToString(subTemplate.Tree.Root),
-			TemplateFilePath: templatePath,
-			Name:             strings.Title(strings.TrimSuffix(subTemplate.Name(), ".gohtml")),
-			EmbedFilePath:    tmpl.Name(),
-			Structs:          structs,
-		})
 	}
 
-	return data, nil
+	// register a function to generate
+	fn := FnDef{
+		Name:         subName,
+		Args:         nil,
+		TemplateName: tmpl.Name(),
+	}
+	if len(structs) > 0 {
+		fn.Args = append(fn.Args, structs[0].Name)
+	}
+	parsed.Fns = append(parsed.Fns, fn)
+	parsed.Structs = append(parsed.Structs, structs...)
+
+	slices.SortFunc(parsed.Structs, func(a, b StructDef) int {
+		if a.Name < b.Name {
+			return -1
+		}
+		if a.Name > b.Name {
+			return 1
+		}
+		return 0
+	})
+	slices.SortFunc(parsed.Fns, func(a, b FnDef) int {
+		if a.Name < b.Name {
+			return -1
+		}
+		if a.Name > b.Name {
+			return 1
+		}
+		return 0
+	})
+
+	return parsed, nil
 }
 
 func addField(templateName string, structs []StructDef, field Field) []StructDef {

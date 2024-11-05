@@ -1,0 +1,35 @@
+{{define "personCard"}}
+    <div>
+        {{.Name}}
+        {{.Age}}
+        <span>
+            {{range .Interest}}
+                <sm>{{.}}</sm>
+            {{else}}
+                <sm>no interests recorded</sm>
+            {{end}}
+        </span>
+    </div>
+{{end}}
+
+{{define "loop"}}
+    {{range .Items}}
+        <p>{{.Name}} - {{.Price}}</p>
+    {{else}}
+        <p>No items</p>
+    {{end}}
+{{end}}
+
+{{define "conditionalLoop"}}
+    <h3>ERROR:</h3>
+    <p>{{.ErrorMsg}}</p>
+
+    {{if .Meta}}
+        <div>
+            {{ range .Meta}}
+                <b>{{.Key}}</b>
+                <span>{{.Value}}</span>
+            {{end}}
+        </div>
+    {{end}}
+{{end}}

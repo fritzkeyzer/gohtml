@@ -1,7 +1,17 @@
-{{range .Widgets}}
-    {{$.Currency}} {{.Price}} - {{.Name}}
+{{define "widgets"}}
+    {{range .Widgets}}
+        {{$.Currency}} {{.Price}} - {{.Name}}
+    {{end}}
 {{end}}
 
-{{range $link := .Socials}}
-    {{$link.Name}} {{$link.Href}}
+{{define "socials"}}
+    {{range $link := .Socials}}
+        {{$link.Name}} {{$link.Href}}
+    {{end}}
+{{end}}
+
+{{define "rangeMap"}}
+    {{range $key, $value := .Data}}
+        <span>{{$key}}: {{$value}}</span>
+    {{end}}
 {{end}}

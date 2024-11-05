@@ -1,14 +1,41 @@
-# Example
+# GoHTML Example Project
 
-## Templates
-GoHTML `*.gohtml` templates are defined in the `views` directory
+A minimal demonstration of GoHTML template generation and usage.
 
-## Config
-By running the `gohtml` cli in this directory, the `gohtml.yaml` file is used by default.
-You can specify a different path using the `-c` flag.
+## Quick Start
 
-## Generated files
-The `*.gohtml.go` files in the template directory were generated.
+1. Create a `gohtml.yaml` config file in your project root
+2. Place your `*.gohtml` templates in the `views` directory
+3. Run `gohtml` to generate the code
+4. Import and use the generated types in your Go code
 
-## Example usage
-Check the `main.go` file in this directory to see how the generated code can be used. 
+## Project Structure
+├── gohtml.yaml     # Configuration file
+├── views/          # Template directory
+│   └── *.gohtml    # Template files
+└── main.go         # Usage example
+
+
+## Configuration
+
+The `gohtml.yaml` file specifies which directories to process:
+
+```yaml
+templates:
+  - views/          # Process all *.gohtml files in views/
+```
+
+To use a different config file:
+```shell
+gohtml -c path/to/config.yaml
+```
+
+## Generated Code
+GoHTML generates a `gohtml.gen.go` file containing:
+
+- Type-safe template structs
+- Rendering functions
+
+
+## Usage Example
+See main.go for a complete working example of the generated code in action.

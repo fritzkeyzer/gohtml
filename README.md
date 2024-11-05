@@ -20,7 +20,7 @@ Generate type-safe wrapper code for html text templates.
 
 # Install
 ```sh
-go install github.com/fritzkeyzer/gohtml/cmd/gohtml@v0.0.7
+go install github.com/fritzkeyzer/gohtml/cmd/gohtml@v0.1.0
 ```
 
 # Usage
@@ -28,8 +28,8 @@ go install github.com/fritzkeyzer/gohtml/cmd/gohtml@v0.0.7
    ```yaml
     version: "0"
     directories:
-    - path: "app/page"
-    - path: "app/partial"
+    - path: "app/pages"
+    - path: "app/components"
     ```
 2. Run `gothml` optionally use the `-c` flag to specify a file (defaults to `gohtml.yaml` in the same directory)
 
@@ -53,7 +53,7 @@ type HelloData struct{
 // Hello renders the "Hello" template as an HTML fragment
 func Hello(data HelloData) template.HTML
 
-// RenderHello renders the "Hello" template to the specified writer
+// RenderHello renders the "Hello" template to a writer
 func RenderHello(w io.Writer, data HelloData) error
 ```
 
@@ -62,12 +62,11 @@ This tool and library are still in development.
 Versions prior to v1 have no compatibility guarantees.
 
 # Roadmap
-- [ ] Support multiple template definitions within one file with. Including usage with args
-- [ ] Handle top level (unnamed) variables
-- [ ] Support templating JS: *.gojs
-- [ ] Support for remaining text template spec
+- [ ] Go type annotations!
+- [x] Define multiple template components per file
+- [x] Use components from other components with typed variables
 - [x] Cache parsed templates
-- [x] Option to specify generated suffix
+- [x] Option to specify generated file
 - [x] YAML config
 - [x] Support `$` root context selector
 - [x] RenderHTTP, with error handling
@@ -76,6 +75,19 @@ Versions prior to v1 have no compatibility guarantees.
 Feel free to post issues - or if you're able to - fix it and submit a PR!
 
 # Changelog
+
+### v0.1.0 (⚠️ minor breaking changes)
+- Fix generation for conditionals with operators (not, eq, etc)
+- Define multiple template components per file (sub-templates can be reused within the same package)
+  - Create: `{{define "component"}} ... {{end}}`
+  - Reuse: `{{template "component"}}`
+  - Use data: `{{template "person" .PersonData}}`
+- Generate to a single file: `gohtml.gen.go`
+- LiveReload with env var: `GOHTML_LIVERELOAD` 
+  - Can be set manually if needed eg: `views.LiveReload = (env == "local")`)
+- CLI: improved debug logs
+- Updated logic for naming generated loop structs
+- Added a golden file test, that tests the entire `tests` directory
 
 ### v0.0.6, v0.0.7 
 - Support `$` root context selector 
