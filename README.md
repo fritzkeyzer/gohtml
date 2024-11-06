@@ -3,9 +3,7 @@ Generate type-safe(ish) wrapper code for Go HTML templates.
 
 [![Version](https://img.shields.io/badge/version-v0.1.1-blue.svg)](https://github.com/fritzkeyzer/gohtml/tags)
 
-> Detailed documentation available in the `docs` directory
-
-> Take a look at the `example` directory for a full example
+> Take a look at the `example` directory for a full example or `tests` for a range of supported features
 
 ## Key Features
 
@@ -57,6 +55,8 @@ func Hello(data HelloData) template.HTML
 func RenderHello(w io.Writer, data HelloData) error
 ```
 
+> 💡Look at the `tests` and `example` directories for more advanced examples
+
 ## Development status
 ⚠️ **Version 0.x.x**: API may change before v1.0
 
@@ -74,7 +74,10 @@ func RenderHello(w io.Writer, data HelloData) error
 - If a .gohtml file **only** contains sub templates, a render function (for the file) is still created even if it will do nothing
 
 ## Contributing
-Issues and PRs welcome!
+Issues and PRs welcome! 
+
+Please report errors and if it's possible, create a test case for your error and submit a PR.
+I would greatly appreciate it.
 
 # Changelog
 
