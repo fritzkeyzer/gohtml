@@ -22,6 +22,9 @@ func (t *GoHTML) Generate(w io.Writer) error {
 	// apply std go formatting
 	formatted, err := format.Source(buf.Bytes())
 	if err != nil {
+		// write the unformatted file (so we can inspect the error)
+		_, _ = w.Write(buf.Bytes())
+
 		return fmt.Errorf("go syntax error: %w", err)
 	}
 
