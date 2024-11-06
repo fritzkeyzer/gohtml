@@ -78,7 +78,8 @@ func ParseDir(dir string) (*GoHTML, error) {
 	})
 
 	for _, tmpl := range orderedTemplates {
-		if tmpl.Name() == path.Base(dir) {
+		// skip the package template
+		if path.Base(tmpl.Name()) == path.Base(dir) {
 			continue
 		}
 

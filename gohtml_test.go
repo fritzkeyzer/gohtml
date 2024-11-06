@@ -22,6 +22,10 @@ func TestDirectory(t *testing.T) {
 			dir:        "tests",
 			goldenFile: "tests/gohtml.gen.go.golden",
 		},
+		{
+			dir:        "tests/nested/views",
+			goldenFile: "tests/nested/views/gohtml.gen.go.golden",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.dir, func(t *testing.T) {

@@ -74,7 +74,10 @@ func parseNode(path []string, node parse.Node) []Field {
 	case *parse.ContinueNode: // A continue action.
 	}
 
-	logz.Debug("parsed node", "path", path, "fields", fields, "node", node.String())
+	if len(fields) > 0 {
+		logz.Debug("parsed node", "path", path, "fields", fields, "node", node.String())
+	}
+	
 	return fields
 }
 

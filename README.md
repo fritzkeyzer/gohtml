@@ -1,7 +1,7 @@
 # GoHTML
 Generate type-safe(ish) wrapper code for Go HTML templates.
 
-[![Version](https://img.shields.io/badge/version-v0.1.0-blue.svg)](https://github.com/fritzkeyzer/gohtml/tags)
+[![Version](https://img.shields.io/badge/version-v0.1.1-blue.svg)](https://github.com/fritzkeyzer/gohtml/tags)
 
 > Detailed documentation available in the `docs` directory
 
@@ -23,14 +23,14 @@ Generate type-safe(ish) wrapper code for Go HTML templates.
 
 ## Installation
 ```sh
-go install github.com/fritzkeyzer/gohtml/cmd/gohtml@v0.1.0
+go install github.com/fritzkeyzer/gohtml/cmd/gohtml@v0.1.1
 ```
 
 ## Quick start
 
 1. Create `gohtml.yaml`:
 ```yaml
-version: "0.1.0"
+version: "0.1.1"
 directories:
   - path: "app/pages"
   - path: "app/components"
@@ -77,6 +77,9 @@ func RenderHello(w io.Writer, data HelloData) error
 Issues and PRs welcome!
 
 # Changelog
+
+### v0.1.1
+- Fix deeply nested template directories causing bad generation
 
 ### v0.1.0
 - Fix generation for conditionals with operators (not, eq, etc)
