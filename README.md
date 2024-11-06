@@ -31,7 +31,7 @@ go install github.com/fritzkeyzer/gohtml/cmd/gohtml@v0.1.2
 
 1. Create `gohtml.yaml`:
 ```yaml
-version: "0.1.1"
+version: "0.1.2"
 directories:
   - path: "app/pages"
   - path: "app/components"

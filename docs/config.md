@@ -7,7 +7,7 @@ You can specify a config file, if needed, with the -c flag.
 ### Structure
 Example with one target directory.
 ```yaml
-version: "0.1.1"
+version: "0.1.2"
 directories:
 - path: "path/to/templates/dir"
   output_file: "gohtml.gen.go"               # default value
@@ -16,7 +16,7 @@ directories:
 ### Example
 This example targets 4 directories. All gohtml templates in these directories will be used to generate code.
 ```yaml
-version: "0.1.1"
+version: "0.1.2"
 directories:
 - path: "app/page"
 - path: "app/partial"
