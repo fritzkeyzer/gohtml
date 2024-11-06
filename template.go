@@ -6,13 +6,15 @@ import (
 	"strings"
 
 	"github.com/fritzkeyzer/gohtml/logz"
+	"github.com/iancoleman/strcase"
 )
 
-func ParseTemplateFile(tmpl *template.Template) (TemplateFile, error) {
+func ConvertTemplate(tmpl *template.Template) (Template, error) {
 	name := strings.TrimSuffix(tmpl.Name(), ".gohtml")
+	name = strcase.ToCamel(name)
 	name = strings.Title(name)
 
-	parsed := TemplateFile{
+	parsed := Template{
 		Name: name,
 	}
 
@@ -71,47 +73,4 @@ func ParseTemplateFile(tmpl *template.Template) (TemplateFile, error) {
 	})
 
 	return parsed, nil
-}
-
-func addField(templateName string, structs []StructDef, field Field) []StructDef {
-	structName := strings.Join(field.Path, "")
-
-	// find and append struct (if it exists)
-	for i := range structs {
-		if structs[i].Name == structName {
-			fieldExists := false
-			for _, f := range structs[i].Fields {
-				if f.Name == field.Name {
-					fieldExists = true
-					break
-				}
-			}
-
-			if !fieldExists {
-				structs[i].Fields = append(structs[i].Fields, field)
-			}
-
-			return structs
-		}
-	}
-
-	// create new struct def
-	structs = append(structs, StructDef{
-		Name:   structName,
-		Fields: []Field{field},
-	})
-
-	// create missing links in data model
-	if len(field.Path) > 1 && !strings.HasPrefix(field.Type, "[]") {
-		parentField := Field{
-			Path: field.Path[:len(field.Path)-1],
-			Name: field.Path[len(field.Path)-1],
-			Type: structName,
-		}
-
-		// find and add field here
-		structs = addField(templateName, structs, parentField)
-	}
-
-	return structs
 }

@@ -57,9 +57,17 @@ func parseNode(path []string, node parse.Node) []Field {
 
 		rangeFieldType := strings.TrimPrefix(rangeField.Type, "[]")
 
-		for _, n := range n.List.Nodes {
-			childFields := parseNode([]string{rangeFieldType}, n)
-			fields = append(fields, childFields...)
+		if n.List != nil && n.List.Nodes != nil {
+			for _, n := range n.List.Nodes {
+				childFields := parseNode([]string{rangeFieldType}, n)
+				fields = append(fields, childFields...)
+			}
+		}
+		if n.ElseList != nil && n.ElseList.Nodes != nil {
+			for _, n := range n.ElseList.Nodes {
+				childFields := parseNode([]string{rangeFieldType}, n)
+				fields = append(fields, childFields...)
+			}
 		}
 	case *parse.StringNode: // A string constant.
 	case *parse.TemplateNode: // A template invocation action.
@@ -77,7 +85,7 @@ func parseNode(path []string, node parse.Node) []Field {
 	if len(fields) > 0 {
 		logz.Debug("parsed node", "path", path, "fields", fields, "node", node.String())
 	}
-	
+
 	return fields
 }
 

@@ -62,7 +62,7 @@ func RenderPage(w io.Writer, data PageData) error {
 	return tmpl().ExecuteTemplate(w, "page.gohtml", data)
 }
 
-// RenderPageHTTP renders page.gohtml to an http.ResponseWriter
+// RenderPageHTTP renders "page.gohtml" to an http.ResponseWriter
 func RenderPageHTTP(w http.ResponseWriter, data PageData) error {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	return tmpl().ExecuteTemplate(w, "page.gohtml", data)
@@ -97,7 +97,7 @@ func RenderPerson(w io.Writer, data PersonData) error {
 	return tmpl().ExecuteTemplate(w, "person.gohtml", data)
 }
 
-// RenderPersonHTTP renders person.gohtml to an http.ResponseWriter
+// RenderPersonHTTP renders "person.gohtml" to an http.ResponseWriter
 func RenderPersonHTTP(w http.ResponseWriter, data PersonData) error {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	return tmpl().ExecuteTemplate(w, "person.gohtml", data)

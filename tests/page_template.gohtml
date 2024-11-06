@@ -1,33 +1,39 @@
-{{define "baseLayout"}}
+{{define "BaseLayout"}}
     <html lang="en">
     <head>
         <title>{{.Title}}</title>
-        {{template "meta"}}
-        {{.Imports}}
+        {{template "Meta"}}
+        {{template "Imports" .Imports}}
     </head>
     <body>
     {{.BodyScript}}
-    {{template "navbar" .Nav}}
+    {{template "Navbar" .Nav}}
     {{.Content}}
     </body>
     </html>
 {{end}}
 
-{{define "meta"}}
+{{define "Meta"}}
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 {{end}}
 
-{{define "navbar"}}
+{{define "Imports"}}
+    {{range .Imports}}
+        <script src="{{.Src}}" {{if .Defer}}defer{{end}}></script>
+    {{end}}
+{{end}}
+
+{{define "Navbar"}}
     <nav>
         <p>{{ .Title}}</p>
         {{range .Links}}
             <a>{{.Name}}</a>
-            {{template "navLink" .Link}}
+            {{template "NavLink" .Link}}
         {{end}}
     </nav>
 {{end}}
 
-{{define "navLink"}}
+{{define "NavLink"}}
     <a href="{{.Href}}">{{.Text}}</a>
 {{end}}

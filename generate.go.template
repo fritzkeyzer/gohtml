@@ -62,7 +62,7 @@ func Render{{.Name}}(w io.Writer, data {{.Name}}Data) error {
 	return tmpl().ExecuteTemplate(w, "{{.TemplateName}}", data)
 }
 
-// Render{{.Name}}HTTP renders {{.TemplateName}} to an http.ResponseWriter
+// Render{{.Name}}HTTP renders "{{.TemplateName}}" to an http.ResponseWriter
 func Render{{.Name}}HTTP(w http.ResponseWriter, data {{.Name}}Data) error {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	return tmpl().ExecuteTemplate(w, "{{.TemplateName}}", data)
@@ -78,7 +78,7 @@ func Render{{.Name}}(w io.Writer) error {
 	return tmpl().ExecuteTemplate(w, "{{.TemplateName}}", nil)
 }
 
-// Render{{.Name}}HTTP renders {{.TemplateName}} to an http.ResponseWriter
+// Render{{.Name}}HTTP renders "{{.TemplateName}}" to an http.ResponseWriter
 func Render{{.Name}}HTTP(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	return tmpl().ExecuteTemplate(w, "{{.TemplateName}}", nil)

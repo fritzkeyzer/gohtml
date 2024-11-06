@@ -46,7 +46,7 @@ func mustHTMLNoArgs(fn func(w io.Writer) error) template.HTML {
 
 type BaseLayoutData struct {
 	Title      any
-	Imports    any
+	Imports    ImportsData
 	BodyScript any
 	Nav        NavbarData
 	Content    any
@@ -59,31 +59,13 @@ func BaseLayout(data BaseLayoutData) template.HTML {
 
 // RenderBaseLayout renders the "BaseLayout" template to a writer
 func RenderBaseLayout(w io.Writer, data BaseLayoutData) error {
-	return tmpl().ExecuteTemplate(w, "baseLayout", data)
+	return tmpl().ExecuteTemplate(w, "BaseLayout", data)
 }
 
-// RenderBaseLayoutHTTP renders baseLayout to an http.ResponseWriter
+// RenderBaseLayoutHTTP renders "BaseLayout" to an http.ResponseWriter
 func RenderBaseLayoutHTTP(w http.ResponseWriter, data BaseLayoutData) error {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	return tmpl().ExecuteTemplate(w, "baseLayout", data)
-}
-
-// BEGIN: Components - - - - - - - -
-
-// Components renders the "Components" template as an HTML fragment
-func Components() template.HTML {
-	return mustHTMLNoArgs(RenderComponents)
-}
-
-// RenderComponents renders the "Components" template to a writer
-func RenderComponents(w io.Writer) error {
-	return tmpl().ExecuteTemplate(w, "components.gohtml", nil)
-}
-
-// RenderComponentsHTTP renders components.gohtml to an http.ResponseWriter
-func RenderComponentsHTTP(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	return tmpl().ExecuteTemplate(w, "components.gohtml", nil)
+	return tmpl().ExecuteTemplate(w, "BaseLayout", data)
 }
 
 // BEGIN: ConditionalLoop - - - - - - - -
@@ -105,13 +87,40 @@ func ConditionalLoop(data ConditionalLoopData) template.HTML {
 
 // RenderConditionalLoop renders the "ConditionalLoop" template to a writer
 func RenderConditionalLoop(w io.Writer, data ConditionalLoopData) error {
-	return tmpl().ExecuteTemplate(w, "conditionalLoop", data)
+	return tmpl().ExecuteTemplate(w, "ConditionalLoop", data)
 }
 
-// RenderConditionalLoopHTTP renders conditionalLoop to an http.ResponseWriter
+// RenderConditionalLoopHTTP renders "ConditionalLoop" to an http.ResponseWriter
 func RenderConditionalLoopHTTP(w http.ResponseWriter, data ConditionalLoopData) error {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	return tmpl().ExecuteTemplate(w, "conditionalLoop", data)
+	return tmpl().ExecuteTemplate(w, "ConditionalLoop", data)
+}
+
+// BEGIN: Imports - - - - - - - -
+
+type ImportsData struct {
+	Imports []ImportsImport
+}
+
+type ImportsImport struct {
+	Src   any
+	Defer any
+}
+
+// Imports renders the "Imports" template as an HTML fragment
+func Imports(data ImportsData) template.HTML {
+	return mustHTML(RenderImports, data)
+}
+
+// RenderImports renders the "Imports" template to a writer
+func RenderImports(w io.Writer, data ImportsData) error {
+	return tmpl().ExecuteTemplate(w, "Imports", data)
+}
+
+// RenderImportsHTTP renders "Imports" to an http.ResponseWriter
+func RenderImportsHTTP(w http.ResponseWriter, data ImportsData) error {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	return tmpl().ExecuteTemplate(w, "Imports", data)
 }
 
 // BEGIN: Loop - - - - - - - -
@@ -132,31 +141,13 @@ func Loop(data LoopData) template.HTML {
 
 // RenderLoop renders the "Loop" template to a writer
 func RenderLoop(w io.Writer, data LoopData) error {
-	return tmpl().ExecuteTemplate(w, "loop", data)
+	return tmpl().ExecuteTemplate(w, "Loop", data)
 }
 
-// RenderLoopHTTP renders loop to an http.ResponseWriter
+// RenderLoopHTTP renders "Loop" to an http.ResponseWriter
 func RenderLoopHTTP(w http.ResponseWriter, data LoopData) error {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	return tmpl().ExecuteTemplate(w, "loop", data)
-}
-
-// BEGIN: Loops - - - - - - - -
-
-// Loops renders the "Loops" template as an HTML fragment
-func Loops() template.HTML {
-	return mustHTMLNoArgs(RenderLoops)
-}
-
-// RenderLoops renders the "Loops" template to a writer
-func RenderLoops(w io.Writer) error {
-	return tmpl().ExecuteTemplate(w, "loops.gohtml", nil)
-}
-
-// RenderLoopsHTTP renders loops.gohtml to an http.ResponseWriter
-func RenderLoopsHTTP(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	return tmpl().ExecuteTemplate(w, "loops.gohtml", nil)
+	return tmpl().ExecuteTemplate(w, "Loop", data)
 }
 
 // BEGIN: Meta - - - - - - - -
@@ -168,13 +159,13 @@ func Meta() template.HTML {
 
 // RenderMeta renders the "Meta" template to a writer
 func RenderMeta(w io.Writer) error {
-	return tmpl().ExecuteTemplate(w, "meta", nil)
+	return tmpl().ExecuteTemplate(w, "Meta", nil)
 }
 
-// RenderMetaHTTP renders meta to an http.ResponseWriter
+// RenderMetaHTTP renders "Meta" to an http.ResponseWriter
 func RenderMetaHTTP(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	return tmpl().ExecuteTemplate(w, "meta", nil)
+	return tmpl().ExecuteTemplate(w, "Meta", nil)
 }
 
 // BEGIN: NavLink - - - - - - - -
@@ -191,13 +182,13 @@ func NavLink(data NavLinkData) template.HTML {
 
 // RenderNavLink renders the "NavLink" template to a writer
 func RenderNavLink(w io.Writer, data NavLinkData) error {
-	return tmpl().ExecuteTemplate(w, "navLink", data)
+	return tmpl().ExecuteTemplate(w, "NavLink", data)
 }
 
-// RenderNavLinkHTTP renders navLink to an http.ResponseWriter
+// RenderNavLinkHTTP renders "NavLink" to an http.ResponseWriter
 func RenderNavLinkHTTP(w http.ResponseWriter, data NavLinkData) error {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	return tmpl().ExecuteTemplate(w, "navLink", data)
+	return tmpl().ExecuteTemplate(w, "NavLink", data)
 }
 
 // BEGIN: Navbar - - - - - - - -
@@ -219,13 +210,42 @@ func Navbar(data NavbarData) template.HTML {
 
 // RenderNavbar renders the "Navbar" template to a writer
 func RenderNavbar(w io.Writer, data NavbarData) error {
-	return tmpl().ExecuteTemplate(w, "navbar", data)
+	return tmpl().ExecuteTemplate(w, "Navbar", data)
 }
 
-// RenderNavbarHTTP renders navbar to an http.ResponseWriter
+// RenderNavbarHTTP renders "Navbar" to an http.ResponseWriter
 func RenderNavbarHTTP(w http.ResponseWriter, data NavbarData) error {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	return tmpl().ExecuteTemplate(w, "navbar", data)
+	return tmpl().ExecuteTemplate(w, "Navbar", data)
+}
+
+// BEGIN: PersonCard - - - - - - - -
+
+type PersonCardData struct {
+	Name     any
+	Age      any
+	Email    any
+	Interest []PersonCardInterestItem
+}
+
+type PersonCardInterestItem struct {
+	any
+}
+
+// PersonCard renders the "PersonCard" template as an HTML fragment
+func PersonCard(data PersonCardData) template.HTML {
+	return mustHTML(RenderPersonCard, data)
+}
+
+// RenderPersonCard renders the "PersonCard" template to a writer
+func RenderPersonCard(w io.Writer, data PersonCardData) error {
+	return tmpl().ExecuteTemplate(w, "PersonCard", data)
+}
+
+// RenderPersonCardHTTP renders "PersonCard" to an http.ResponseWriter
+func RenderPersonCardHTTP(w http.ResponseWriter, data PersonCardData) error {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	return tmpl().ExecuteTemplate(w, "PersonCard", data)
 }
 
 // BEGIN: Nested - - - - - - - -
@@ -264,56 +284,10 @@ func RenderNested(w io.Writer, data NestedData) error {
 	return tmpl().ExecuteTemplate(w, "nested.gohtml", data)
 }
 
-// RenderNestedHTTP renders nested.gohtml to an http.ResponseWriter
+// RenderNestedHTTP renders "nested.gohtml" to an http.ResponseWriter
 func RenderNestedHTTP(w http.ResponseWriter, data NestedData) error {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	return tmpl().ExecuteTemplate(w, "nested.gohtml", data)
-}
-
-// BEGIN: Page - - - - - - - -
-
-// Page renders the "Page" template as an HTML fragment
-func Page() template.HTML {
-	return mustHTMLNoArgs(RenderPage)
-}
-
-// RenderPage renders the "Page" template to a writer
-func RenderPage(w io.Writer) error {
-	return tmpl().ExecuteTemplate(w, "page.gohtml", nil)
-}
-
-// RenderPageHTTP renders page.gohtml to an http.ResponseWriter
-func RenderPageHTTP(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	return tmpl().ExecuteTemplate(w, "page.gohtml", nil)
-}
-
-// BEGIN: PersonCard - - - - - - - -
-
-type PersonCardData struct {
-	Name     any
-	Age      any
-	Interest []PersonCardInterestItem
-}
-
-type PersonCardInterestItem struct {
-	any
-}
-
-// PersonCard renders the "PersonCard" template as an HTML fragment
-func PersonCard(data PersonCardData) template.HTML {
-	return mustHTML(RenderPersonCard, data)
-}
-
-// RenderPersonCard renders the "PersonCard" template to a writer
-func RenderPersonCard(w io.Writer, data PersonCardData) error {
-	return tmpl().ExecuteTemplate(w, "personCard", data)
-}
-
-// RenderPersonCardHTTP renders personCard to an http.ResponseWriter
-func RenderPersonCardHTTP(w http.ResponseWriter, data PersonCardData) error {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	return tmpl().ExecuteTemplate(w, "personCard", data)
 }
 
 // BEGIN: RangeMap - - - - - - - -
@@ -337,37 +311,10 @@ func RenderRangeMap(w io.Writer, data RangeMapData) error {
 	return tmpl().ExecuteTemplate(w, "rangeMap", data)
 }
 
-// RenderRangeMapHTTP renders rangeMap to an http.ResponseWriter
+// RenderRangeMapHTTP renders "rangeMap" to an http.ResponseWriter
 func RenderRangeMapHTTP(w http.ResponseWriter, data RangeMapData) error {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	return tmpl().ExecuteTemplate(w, "rangeMap", data)
-}
-
-// BEGIN: Socials - - - - - - - -
-
-type SocialsData struct {
-	Socials []SocialsSocial
-}
-
-type SocialsSocial struct {
-	Name any
-	Href any
-}
-
-// Socials renders the "Socials" template as an HTML fragment
-func Socials(data SocialsData) template.HTML {
-	return mustHTML(RenderSocials, data)
-}
-
-// RenderSocials renders the "Socials" template to a writer
-func RenderSocials(w io.Writer, data SocialsData) error {
-	return tmpl().ExecuteTemplate(w, "socials", data)
-}
-
-// RenderSocialsHTTP renders socials to an http.ResponseWriter
-func RenderSocialsHTTP(w http.ResponseWriter, data SocialsData) error {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	return tmpl().ExecuteTemplate(w, "socials", data)
 }
 
 // BEGIN: Widgets - - - - - - - -
@@ -392,7 +339,7 @@ func RenderWidgets(w io.Writer, data WidgetsData) error {
 	return tmpl().ExecuteTemplate(w, "widgets", data)
 }
 
-// RenderWidgetsHTTP renders widgets to an http.ResponseWriter
+// RenderWidgetsHTTP renders "widgets" to an http.ResponseWriter
 func RenderWidgetsHTTP(w http.ResponseWriter, data WidgetsData) error {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	return tmpl().ExecuteTemplate(w, "widgets", data)

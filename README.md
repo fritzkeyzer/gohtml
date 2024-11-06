@@ -1,7 +1,7 @@
 # GoHTML
-Generate type-safe(ish) wrapper code for Go HTML templates.
+Generate type-safe (ish) wrapper code for Go HTML templates.
 
-[![Version](https://img.shields.io/badge/version-v0.1.1-blue.svg)](https://github.com/fritzkeyzer/gohtml/tags)
+[![Version](https://img.shields.io/badge/version-v0.1.2-blue.svg)](https://github.com/fritzkeyzer/gohtml/tags)
 
 > Take a look at the `example` directory for a full example or `tests` for a range of supported features
 
@@ -11,17 +11,20 @@ Generate type-safe(ish) wrapper code for Go HTML templates.
   - Render templates partials `template.HTML`
   - Render templates to `io.Writer` or `http.ResponseWriter`
 
-### 🔒 Type Safety
-  - Automatically generated Go types for each template.
+### 🔒❓ Type-safe (ish)
+  - Generate data structs (props) for all templates and sub-templates
+  - Unfortunately 
   - Supports variables, loops, conditionals and sub-templates via static analysis.
 
 ### 💻 Developer Experience
-  - Hot-reloading: templates are loaded from disk during development, so changes reflect immediately.
-  - Combined with an IDE or external file-watcher, gohtml can re-run upon changes to template files.
+  - Hot-reloading: templates are loaded from disk during development, so changes reflect immediately
+  - IDE support: Use well-defined, well-supported languages. HTML, CSS, JS and Go text templates
+  - AI support: LLMs are incredibly familiar with HTML and very familiar with Go text templates  
+  - Compile time errors for invalid templates or usage of templates
 
 ## Installation
 ```sh
-go install github.com/fritzkeyzer/gohtml/cmd/gohtml@v0.1.1
+go install github.com/fritzkeyzer/gohtml/cmd/gohtml@v0.1.2
 ```
 
 ## Quick start
@@ -39,20 +42,43 @@ gohtml
 ```
 
 ## Example
-`hello.gohtml`:
+`components.gohtml`:
 ```gotemplate
-<h1>Hello {{.Name}}</h1>
-<p>{{.Message}}</p>
+{{define "PersonCard"}}
+<div class="card">
+  <h3>{{.Name}}</h3>
+  <p>{{.Age}} - {{.Email}}</p>
+  <span>
+            {{range .Interest}}
+                <sm>{{.}}</sm>
+            {{else}}
+                <sm>no interests recorded</sm>
+            {{end}}
+        </span>
+</div>
+{{end}}
 ```
 Generated code:
 ```go
-type HelloData struct {
-    Name    any
-    Message any
+type PersonCardData struct {
+  Name     any
+  Age      any
+  Email    any
+  Interest []PersonCardInterestItem
 }
 
-func Hello(data HelloData) template.HTML
-func RenderHello(w io.Writer, data HelloData) error
+type PersonCardInterestItem struct {
+    any
+}
+
+// PersonCard renders the "PersonCard" template as an HTML fragment
+func PersonCard(data PersonCardData) template.HTML
+
+// RenderPersonCard renders the "PersonCard" template to a writer
+func RenderPersonCard(w io.Writer, data PersonCardData) error
+
+// RenderPersonCardHTTP renders PersonCard to an http.ResponseWriter
+func RenderPersonCardHTTP(w http.ResponseWriter, data PersonCardData) error
 ```
 
 > 💡Look at the `tests` and `example` directories for more advanced examples
@@ -61,6 +87,7 @@ func RenderHello(w io.Writer, data HelloData) error
 ⚠️ **Version 0.x.x**: API may change before v1.0
 
 ### Roadmap
+- [ ] Additional install options
 - [ ] Go type annotations
 - [x] Multiple components per file
 - [x] Component reuse with typed variables
@@ -80,6 +107,10 @@ Please report errors and if it's possible, create a test case for your error and
 I would greatly appreciate it.
 
 # Changelog
+
+### v0.1.2
+- No longer generate functions for empty templates 
+(eg: files that only have sub-template definitions)
 
 ### v0.1.1
 - Fix deeply nested template directories causing bad generation

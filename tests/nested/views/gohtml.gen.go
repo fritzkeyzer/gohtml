@@ -58,7 +58,7 @@ func RenderNested(w io.Writer, data NestedData) error {
 	return tmpl().ExecuteTemplate(w, "nested.gohtml", data)
 }
 
-// RenderNestedHTTP renders nested.gohtml to an http.ResponseWriter
+// RenderNestedHTTP renders "nested.gohtml" to an http.ResponseWriter
 func RenderNestedHTTP(w http.ResponseWriter, data NestedData) error {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	return tmpl().ExecuteTemplate(w, "nested.gohtml", data)

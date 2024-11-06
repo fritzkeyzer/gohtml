@@ -36,7 +36,7 @@ func main() {
 	}
 
 	for _, dir := range cfg.Dirs {
-
+		logz.Debug("Running on dir", "dir", dir)
 		err = run(dir)
 		if err != nil {
 			logz.Error(err, "failed on directory", "directory", dir)
@@ -61,7 +61,7 @@ func run(dir gohtml.Dir) (err error) {
 		return fmt.Errorf("generate: %w", err)
 	}
 
-	logz.Info("Output file: " + path.Join(dir.Path, dir.OutputFileName))
+	logz.Info("gohtml generated: " + path.Join(dir.Path, dir.OutputFileName))
 
 	return nil
 }

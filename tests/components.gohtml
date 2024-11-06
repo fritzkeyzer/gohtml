@@ -1,7 +1,7 @@
-{{define "personCard"}}
-    <div>
-        {{.Name}}
-        {{.Age}}
+{{define "PersonCard"}}
+    <div class="card">
+        <h3>{{.Name}}</h3>
+        <p>{{.Age}} - {{.Email}}</p>
         <span>
             {{range .Interest}}
                 <sm>{{.}}</sm>
@@ -12,7 +12,7 @@
     </div>
 {{end}}
 
-{{define "loop"}}
+{{define "Loop"}}
     {{range .Items}}
         <p>{{.Name}} - {{.Price}}</p>
     {{else}}
@@ -20,7 +20,7 @@
     {{end}}
 {{end}}
 
-{{define "conditionalLoop"}}
+{{define "ConditionalLoop"}}
     <h3>ERROR:</h3>
     <p>{{.ErrorMsg}}</p>
 

@@ -23,5 +23,3 @@ directories:
 - path: "dashboard/page"
 - path: "dashboard/partial"
 ```
-
-
