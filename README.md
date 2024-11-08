@@ -1,7 +1,7 @@
 # GoHTML
 Generate type-safe (ish) wrapper code for Go HTML templates.
 
-[![Version](https://img.shields.io/badge/version-v0.1.2-blue.svg)](https://github.com/fritzkeyzer/gohtml/tags)
+[![Version](https://img.shields.io/badge/version-v0.1.3-blue.svg)](https://github.com/fritzkeyzer/gohtml/tags)
 
 > Take a look at the `example` directory for a full example or `tests` for a range of supported features
 
@@ -24,14 +24,14 @@ Generate type-safe (ish) wrapper code for Go HTML templates.
 
 ## Installation
 ```sh
-go install github.com/fritzkeyzer/gohtml/cmd/gohtml@v0.1.2
+go install github.com/fritzkeyzer/gohtml/cmd/gohtml@v0.1.3
 ```
 
 ## Quick start
 
 1. Create `gohtml.yaml`:
 ```yaml
-version: "0.1.2"
+version: "0.1.3"
 directories:
   - path: "app/pages"
   - path: "app/components"
@@ -114,7 +114,7 @@ I would greatly appreciate it.
 - Use pointers for nested data to support passing nils
 - Improve type detection when a variable appears multiple times eg, {{if .Data}} {{template "Component" .Data}} {{end}}
 
-### v0.1.2
+### v0.1.3
 - No longer generate functions for empty templates 
 (eg: files that only have sub-template definitions)
 
