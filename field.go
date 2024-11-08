@@ -43,9 +43,17 @@ func parseNode(path []string, node parse.Node) []Field {
 	case *parse.IfNode: // An if action.
 		ifNode := parseIfNodeField(path, n.Pipe.String())
 		fields = []Field{ifNode}
-		for _, n := range n.List.Nodes {
-			childFields := parseNode(path, n)
-			fields = append(fields, childFields...)
+		if n.List != nil && n.List.Nodes != nil {
+			for _, n := range n.List.Nodes {
+				childFields := parseNode(path, n)
+				fields = append(fields, childFields...)
+			}
+		}
+		if n.ElseList != nil && n.ElseList.Nodes != nil {
+			for _, n := range n.ElseList.Nodes {
+				childFields := parseNode(path, n)
+				fields = append(fields, childFields...)
+			}
 		}
 	case *parse.ListNode: // A list of Nodes.
 	case *parse.NilNode: // An untyped nil constant.
@@ -53,22 +61,37 @@ func parseNode(path []string, node parse.Node) []Field {
 	case *parse.PipeNode: // A pipeline of commands.
 	case *parse.RangeNode: // A range action.
 		rangeField := parseRangeNodeField(path, n.Pipe.String())
-		fields = []Field{rangeField}
-
 		rangeFieldType := strings.TrimPrefix(rangeField.Type, "[]")
 
+		var rangeChildFields []Field
 		if n.List != nil && n.List.Nodes != nil {
 			for _, n := range n.List.Nodes {
 				childFields := parseNode([]string{rangeFieldType}, n)
-				fields = append(fields, childFields...)
+				rangeChildFields = append(rangeChildFields, childFields...)
 			}
 		}
 		if n.ElseList != nil && n.ElseList.Nodes != nil {
 			for _, n := range n.ElseList.Nodes {
 				childFields := parseNode([]string{rangeFieldType}, n)
-				fields = append(fields, childFields...)
+				rangeChildFields = append(rangeChildFields, childFields...)
 			}
 		}
+
+		// check if the range has any meaningful children
+		meaningful := false
+		for _, f := range rangeChildFields {
+			if f.Name != "" {
+				meaningful = true
+				break
+			}
+		}
+		if !meaningful {
+			rangeField.Type = "any" // change the range variable to any, to allow arbitrary slices to be used
+			rangeChildFields = nil
+		}
+		fields = append(fields, rangeField)
+		fields = append(fields, rangeChildFields...)
+
 	case *parse.StringNode: // A string constant.
 	case *parse.TemplateNode: // A template invocation action.
 		templateField := parseTemplateNodeField(path, n.String())
@@ -249,6 +272,6 @@ func parseTemplateNodeField(path []string, node string) Field {
 	return Field{
 		Path: path,
 		Name: parts[len(parts)-1],
-		Type: strings.Title(referencedTemplateName) + "Data",
+		Type: "*" + strings.Title(referencedTemplateName) + "Data",
 	}
 }

@@ -8,13 +8,13 @@ import (
 
 func main() {
 	content := tests.Nested(tests.NestedData{
-		Organisation: tests.NestedOrganisation{
+		Organisation: &tests.NestedOrganisation{
 			Name:    "company",
 			Founded: "long ago",
 		},
-		Employee: tests.NestedEmployee{
-			Personal: tests.NestedEmployeePersonal{
-				Address: tests.NestedEmployeePersonalAddress{
+		Employee: &tests.NestedEmployee{
+			Personal: &tests.NestedEmployeePersonal{
+				Address: &tests.NestedEmployeePersonalAddress{
 					Street:  "something lane",
 					City:    "42",
 					Country: "lala land",
@@ -25,7 +25,7 @@ func main() {
 
 	err := tests.RenderBaseLayout(os.Stdout, tests.BaseLayoutData{
 		Title: "Hello World",
-		Imports: tests.ImportsData{
+		Imports: &tests.ImportsData{
 			Imports: []tests.ImportsImport{
 				{Src: "https://unpkg.com/htmx.org@1.9.12/dist/htmx.min.js"},
 				{Src: "https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js", Defer: true},
@@ -33,19 +33,19 @@ func main() {
 		},
 		//language=javascript
 		BodyScript: `console.log('Hello World')`,
-		Nav: tests.NavbarData{
+		Nav: &tests.NavbarData{
 			Title: "Hello World",
 			Links: []tests.NavbarLink{
 				{
 					Name: "Home",
-					Link: tests.NavLinkData{
+					Link: &tests.NavLinkData{
 						Href: "/home",
 						Text: "Home",
 					},
 				},
 				{
 					Name: "Home",
-					Link: tests.NavLinkData{
+					Link: &tests.NavLinkData{
 						Href: "/home",
 						Text: "Home",
 					},

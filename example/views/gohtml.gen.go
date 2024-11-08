@@ -42,11 +42,34 @@ func mustHTMLNoArgs(fn func(w io.Writer) error) template.HTML {
 	return template.HTML(w.String())
 }
 
+// BEGIN: Nav - - - - - - - -
+
+type NavData struct {
+	Links any
+}
+
+// Nav renders the "Nav" template as an HTML fragment
+func Nav(data NavData) template.HTML {
+	return mustHTML(RenderNav, data)
+}
+
+// RenderNav renders the "Nav" template to a writer
+func RenderNav(w io.Writer, data NavData) error {
+	return tmpl().ExecuteTemplate(w, "Nav", data)
+}
+
+// RenderNavHTTP renders "Nav" to an http.ResponseWriter
+func RenderNavHTTP(w http.ResponseWriter, data NavData) error {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	return tmpl().ExecuteTemplate(w, "Nav", data)
+}
+
 // BEGIN: Page - - - - - - - -
 
 type PageData struct {
 	Title       any
 	Description any
+	Nav         *NavData
 	SignedIn    any
 	Username    any
 	Body        any
@@ -78,7 +101,7 @@ type PersonContact struct {
 type PersonData struct {
 	Name    any
 	Age     any
-	Contact PersonContact
+	Contact *PersonContact
 	Socials []PersonSocial
 }
 

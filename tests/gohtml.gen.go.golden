@@ -46,9 +46,9 @@ func mustHTMLNoArgs(fn func(w io.Writer) error) template.HTML {
 
 type BaseLayoutData struct {
 	Title      any
-	Imports    ImportsData
+	Imports    *ImportsData
 	BodyScript any
-	Nav        NavbarData
+	Nav        *NavbarData
 	Content    any
 }
 
@@ -72,7 +72,7 @@ func RenderBaseLayoutHTTP(w http.ResponseWriter, data BaseLayoutData) error {
 
 type ConditionalLoopData struct {
 	ErrorMsg any
-	Meta     any
+	Meta     []ConditionalLoopMetaItem
 }
 
 type ConditionalLoopMetaItem struct {
@@ -200,7 +200,7 @@ type NavbarData struct {
 
 type NavbarLink struct {
 	Name any
-	Link NavLinkData
+	Link *NavLinkData
 }
 
 // Navbar renders the "Navbar" template as an HTML fragment
@@ -225,11 +225,7 @@ type PersonCardData struct {
 	Name     any
 	Age      any
 	Email    any
-	Interest []PersonCardInterestItem
-}
-
-type PersonCardInterestItem struct {
-	any
+	Interest any
 }
 
 // PersonCard renders the "PersonCard" template as an HTML fragment
@@ -251,16 +247,16 @@ func RenderPersonCardHTTP(w http.ResponseWriter, data PersonCardData) error {
 // BEGIN: Nested - - - - - - - -
 
 type NestedData struct {
-	Organisation NestedOrganisation
-	Employee     NestedEmployee
+	Organisation *NestedOrganisation
+	Employee     *NestedEmployee
 }
 
 type NestedEmployee struct {
-	Personal NestedEmployeePersonal
+	Personal *NestedEmployeePersonal
 }
 
 type NestedEmployeePersonal struct {
-	Address NestedEmployeePersonalAddress
+	Address *NestedEmployeePersonalAddress
 }
 
 type NestedEmployeePersonalAddress struct {

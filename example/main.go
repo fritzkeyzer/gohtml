@@ -16,7 +16,7 @@ func main() {
 	person := views.Person(views.PersonData{
 		Name: "John Doe",
 		Age:  42,
-		Contact: views.PersonContact{
+		Contact: &views.PersonContact{
 			Phone: "0123456789",
 			Email: "john@doe.com",
 		},
@@ -30,9 +30,12 @@ func main() {
 	err := views.RenderPage(w, views.PageData{
 		Title:       "Example page",
 		Description: "Demonstrate basic usage of gohtml",
-		SignedIn:    false,
-		Username:    nil,
-		Body:        person, // note that we can nest partials within each other
+		Nav: &views.NavData{
+			Links: []string{"/hello", "/world"},
+		},
+		SignedIn: false,
+		Username: nil,
+		Body:     person, // note that we can nest partials within each other
 	})
 	if err != nil {
 		panic(err)
@@ -48,6 +51,17 @@ func main() {
 	    <meta name="description" content="Demonstrate basic usage of gohtml">
 	</head>
 	<body>
+
+
+	    <nav>
+
+	            <a href="/hello">/hello</a>
+
+	            <a href="/world">/world</a>
+
+	    </nav>
+
+
 	<div>
 
 	</div>

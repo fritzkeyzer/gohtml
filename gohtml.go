@@ -123,6 +123,8 @@ func renderTextNode(n parse.Node) string {
 	switch n := n.(type) {
 	case *parse.TextNode:
 		content += strings.TrimSpace(n.String())
+	case *parse.IfNode:
+		content += strings.TrimSpace(n.String())
 	case *parse.RangeNode:
 		if n.List != nil && n.List.Nodes != nil {
 			for _, n := range n.List.Nodes {

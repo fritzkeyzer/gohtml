@@ -7,9 +7,20 @@
     <meta name="description" content="{{.Description}}">
 </head>
 <body>
+{{if .Nav}}
+    {{template "Nav" .Nav}}
+{{end}}
 <div>
     {{ if .SignedIn }}<p>Hello {{.Username}}</p>{{ end }}
 </div>
 {{.Body}}
 </body>
 </html>
+
+{{define "Nav"}}
+    <nav>
+        {{range .Links}}
+            <a href="{{.}}">{{.}}</a>
+        {{end}}
+    </nav>
+{{end}}

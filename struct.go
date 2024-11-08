@@ -14,9 +14,15 @@ func addField(templateName string, structs []StructDef, field Field) []StructDef
 	for i := range structs {
 		if structs[i].Name == structName {
 			fieldExists := false
-			for _, f := range structs[i].Fields {
+			for j, f := range structs[i].Fields {
 				if f.Name == field.Name {
 					fieldExists = true
+
+					// update to use the more specific type
+					if f.Type == "any" && field.Type != "any" {
+						structs[i].Fields[j].Type = field.Type
+					}
+
 					break
 				}
 			}
@@ -40,7 +46,7 @@ func addField(templateName string, structs []StructDef, field Field) []StructDef
 		parentField := Field{
 			Path: field.Path[:len(field.Path)-1],
 			Name: field.Path[len(field.Path)-1],
-			Type: structName,
+			Type: "*" + structName,
 		}
 
 		// find and add field here

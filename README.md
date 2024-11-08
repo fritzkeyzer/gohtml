@@ -108,6 +108,12 @@ I would greatly appreciate it.
 
 # Changelog
 
+### v0.1.3
+- Fix range elements with only {{.}} children
+- Fix missing else branches
+- Use pointers for nested data to support passing nils
+- Improve type detection when a variable appears multiple times eg, {{if .Data}} {{template "Component" .Data}} {{end}}
+
 ### v0.1.2
 - No longer generate functions for empty templates 
 (eg: files that only have sub-template definitions)
