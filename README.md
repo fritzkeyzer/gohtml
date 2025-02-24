@@ -1,7 +1,7 @@
 # GoHTML
 Generate type-safe (ish) binding code for Go HTML templates.
 
-[![Version](https://img.shields.io/badge/version-v0.1.4-blue.svg)](https://github.com/fritzkeyzer/gohtml/tags)
+[![Version](https://img.shields.io/badge/version-v0.1.5-blue.svg)](https://github.com/fritzkeyzer/gohtml/tags)
 
 > Take a look at the `example` directory for a full example or `tests` for a range of supported features
 
@@ -106,6 +106,9 @@ Please report errors and if it's possible, create a test case for your error and
 I would greatly appreciate it.
 
 # Changelog
+
+### v0.1.5
+- Fix empty template directory generating invalid go code
 
 ### v0.1.4
 - Update CLI with `gohtml generate` command and additional help and version options.

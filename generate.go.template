@@ -7,9 +7,12 @@ import (
 	"embed"
 	"html/template"
 	"io"
-	"net/http"
 	"os"
 )
+
+{{if .Templates}}
+import "net/http"
+{{end}}
 
 var LiveReload = os.Getenv("GOHTML_LIVERELOAD") != ""
 

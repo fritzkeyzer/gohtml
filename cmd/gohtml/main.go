@@ -16,7 +16,7 @@ import (
 func main() {
 	cmd := &cli.Command{
 		Name:    "gohtml",
-		Version: "v0.1.4",
+		Version: "v0.1.5",
 		Usage:   "Generate type-safe go bindings for *.gohtml text templates",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{

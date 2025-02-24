@@ -1,42 +1,32 @@
 package gohtml
 
 import (
-	"bytes"
 	"os"
 	"testing"
 
-	"github.com/maxatome/go-testdeep/td"
+	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
 // TestDirectory runs gohtml on a directory and compares the buffered output to that of the golden file.
 // This does not test file writing.
 func TestDirectory(t *testing.T) {
-	type args struct {
-		dir string
-	}
 	tests := []struct {
-		dir        string
+		gen        string
 		goldenFile string
 	}{
 		{
-			dir:        "tests",
+			gen:        "tests/gohtml.gen.go",
 			goldenFile: "tests/gohtml.gen.go.golden",
 		},
 		{
-			dir:        "tests/nested/views",
+			gen:        "tests/nested/views/gohtml.gen.go",
 			goldenFile: "tests/nested/views/gohtml.gen.go.golden",
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.dir, func(t *testing.T) {
-			g, err := ParseDir(tt.dir)
-			if err != nil {
-				t.Error(err)
-				return
-			}
-
-			gotBuf := new(bytes.Buffer)
-			err = g.Generate(gotBuf)
+		t.Run(tt.gen, func(t *testing.T) {
+			// got gen
+			gotBuf, err := os.ReadFile(tt.gen)
 			if err != nil {
 				t.Error(err)
 				return
@@ -49,7 +39,11 @@ func TestDirectory(t *testing.T) {
 				return
 			}
 
-			td.CmpString(t, gotBuf.String(), string(wantBuf))
+			if string(gotBuf) != string(wantBuf) {
+				dmp := diffmatchpatch.New()
+				diffs := dmp.DiffMain(string(gotBuf), string(wantBuf), false)
+				t.Error(dmp.DiffPrettyText(diffs))
+			}
 		})
 	}
 }
