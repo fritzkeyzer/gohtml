@@ -1,44 +1,43 @@
 # GoHTML
-Generate type-safe (ish) wrapper code for Go HTML templates.
+Generate type-safe (ish) binding code for Go HTML templates.
 
-[![Version](https://img.shields.io/badge/version-v0.1.3-blue.svg)](https://github.com/fritzkeyzer/gohtml/tags)
+[![Version](https://img.shields.io/badge/version-v0.1.4-blue.svg)](https://github.com/fritzkeyzer/gohtml/tags)
 
 > Take a look at the `example` directory for a full example or `tests` for a range of supported features
 
 ## Key Features
 
 ### 🚀 Generated render functions
-  - Render templates partials `template.HTML`
-  - Render templates to `io.Writer` or `http.ResponseWriter`
+  - Generate function to render templates partials as `template.HTML`
+  - Generate functions to render templates to `io.Writer` or `http.ResponseWriter`
 
 ### 🔒❓ Type-safe (ish)
   - Generate data structs (props) for all templates and sub-templates
-  - Unfortunately 
   - Supports variables, loops, conditionals and sub-templates via static analysis.
 
 ### 💻 Developer Experience
   - Hot-reloading: templates are loaded from disk during development, so changes reflect immediately
   - IDE support: Use well-defined, well-supported languages. HTML, CSS, JS and Go text templates
-  - AI support: LLMs are incredibly familiar with HTML and very familiar with Go text templates  
+  - AI support: LLMs are incredibly familiar with HTML and Go text templates  
   - Compile time errors for invalid templates or usage of templates
 
 ## Installation
 ```sh
-go install github.com/fritzkeyzer/gohtml/cmd/gohtml@v0.1.3
+go install github.com/fritzkeyzer/gohtml/cmd/gohtml@latest
 ```
 
 ## Quick start
 
 1. Create `gohtml.yaml`:
 ```yaml
-version: "0.1.3"
+version: "0"
 directories:
   - path: "app/pages"
   - path: "app/components"
 ```
 2. Run generator
 ```shell
-gohtml
+gohtml generate
 ```
 
 ## Example
@@ -86,8 +85,8 @@ func RenderPersonCardHTTP(w http.ResponseWriter, data PersonCardData) error
 ## Development status
 ⚠️ **Version 0.x.x**: API may change before v1.0
 
-### Roadmap
-- [ ] Additional install options
+### Roadmap / ideas
+- [ ] Additional installation options (other than go install ...)
 - [ ] Go type annotations
 - [x] Multiple components per file
 - [x] Component reuse with typed variables
@@ -98,7 +97,7 @@ func RenderPersonCardHTTP(w http.ResponseWriter, data PersonCardData) error
 - [x] HTTP rendering with error handling
 
 ### Known bugs
-- If a .gohtml file **only** contains sub templates, a render function (for the file) is still created even if it will do nothing
+- Check the [issues](https://github.com/fritzkeyzer/gohtml/issues) tab
 
 ## Contributing
 Issues and PRs welcome! 
@@ -108,13 +107,16 @@ I would greatly appreciate it.
 
 # Changelog
 
+### v0.1.4
+- Update CLI with `gohtml generate` command and additional help and version options.
+
 ### v0.1.3
 - Fix range elements with only {{.}} children
 - Fix missing else branches
 - Use pointers for nested data to support passing nils
 - Improve type detection when a variable appears multiple times eg, {{if .Data}} {{template "Component" .Data}} {{end}}
 
-### v0.1.3
+### v0.1.2
 - No longer generate functions for empty templates 
 (eg: files that only have sub-template definitions)
 

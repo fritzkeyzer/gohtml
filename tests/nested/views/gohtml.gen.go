@@ -19,7 +19,7 @@ var templates = template.Must(template.ParseFS(tmplFiles, "*.gohtml"))
 
 func tmpl() *template.Template {
 	if LiveReload {
-		return template.Must(template.ParseFS(os.DirFS("tests/nested/views"), "*.gohtml"))
+		return template.Must(template.ParseFS(os.DirFS("nested/views"), "*.gohtml"))
 	}
 	return templates
 }

@@ -3,6 +3,7 @@ package gohtml
 import (
 	"fmt"
 	"html/template"
+	"os"
 	"path"
 	"path/filepath"
 	"slices"
@@ -57,8 +58,16 @@ func ParseDir(dir string) (*GoHTML, error) {
 	logz.Debug("templates valid")
 
 	// generate types and handler functions for each file
+	pkgName := path.Base(dir)
+	if dir == "." {
+		ex, err := os.Getwd()
+		if err != nil {
+			panic(err)
+		}
+		pkgName = path.Base(ex)
+	}
 	g := &GoHTML{
-		PackageName: path.Base(dir),
+		PackageName: pkgName,
 		Templates:   nil,
 		TemplateDir: dir,
 	}

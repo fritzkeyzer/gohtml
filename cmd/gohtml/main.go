@@ -1,47 +1,81 @@
 package main
 
 import (
-	"flag"
+	"context"
 	"fmt"
 	"log/slog"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/fritzkeyzer/gohtml"
 	"github.com/fritzkeyzer/gohtml/logz"
-)
-
-var (
-	cfgFlag     = flag.String("c", "gohtml.yaml", "config file")
-	verboseFlag = flag.Bool("v", false, "verbose")
+	"github.com/urfave/cli/v3"
 )
 
 func main() {
-	flag.Parse()
+	cmd := &cli.Command{
+		Name:    "gohtml",
+		Version: "v0.1.4",
+		Usage:   "Generate type-safe go bindings for *.gohtml text templates",
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name: "verbose",
+				Action: func(ctx context.Context, command *cli.Command, b bool) error {
+					if b {
+						logz.Level = slog.LevelDebug
+					}
+					return nil
+				},
+			},
+		},
+		Commands: []*cli.Command{
+			{
+				Name:        "generate",
+				Description: "Run the generator",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "config",
+						Value:   "gohtml.yaml",
+						Aliases: []string{"c"},
+					},
+				},
+				Action: func(ctx context.Context, cmd *cli.Command) error {
+					cfgPath := cmd.String("config")
+					cfg, err := gohtml.ParseCfg(cfgPath)
+					if err != nil {
+						return fmt.Errorf("parse config: %v", err)
+					}
 
-	cfg, err := gohtml.ParseCfg(*cfgFlag)
-	if err != nil {
-		panic(err)
+					logz.Debug("Parsed config", "cfg", cfg)
+
+					if len(cfg.Dirs) == 0 {
+						logz.Error(nil, "invalid config", "cfg", cfg)
+						return fmt.Errorf("no dirs configured")
+					}
+
+					var errors []string
+					for _, dir := range cfg.Dirs {
+						logz.Debug("Running on dir", "dir", dir)
+						err = run(dir)
+						if err != nil {
+							logz.Error(err, "failed on directory", "directory", dir)
+							errors = append(errors, err.Error())
+						}
+					}
+
+					if len(errors) > 0 {
+						return fmt.Errorf("generate errors: [%v]", strings.Join(errors, "; "))
+					}
+
+					return nil
+				},
+			},
+		},
 	}
 
-	if *verboseFlag {
-		logz.Level = slog.LevelDebug
-	}
-
-	logz.Debug("Parsed config", "cfg", cfg)
-
-	if len(cfg.Dirs) == 0 {
-		logz.Error(nil, "no dirs configured", "cfg", cfg)
-		os.Exit(1)
-	}
-
-	for _, dir := range cfg.Dirs {
-		logz.Debug("Running on dir", "dir", dir)
-		err = run(dir)
-		if err != nil {
-			logz.Error(err, "failed on directory", "directory", dir)
-			os.Exit(1)
-		}
+	if err := cmd.Run(context.Background(), os.Args); err != nil {
+		logz.Error(err, "gohtml exited")
 	}
 }
 
