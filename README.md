@@ -41,43 +41,52 @@ gohtml generate
 ```
 
 ## Example
-`components.gohtml`:
+`person.gohtml`:
 ```gotemplate
-{{define "PersonCard"}}
-<div class="card">
-  <h3>{{.Name}}</h3>
-  <p>{{.Age}} - {{.Email}}</p>
-  <span>
-            {{range .Interest}}
-                <sm>{{.}}</sm>
-            {{else}}
-                <sm>no interests recorded</sm>
-            {{end}}
-        </span>
+<h1>Person</h1>
+<p>Name: {{.Name}}</p>
+<p>Age: {{.Age}}</p>
+<p>Phone: {{.Contact.Phone}}</p>
+<p>Email: {{.Contact.Email}}</p>
+<div>{{range $link := .Socials}}
+  <a href="{{$link.Href}}">{{$link.Name}}</a>{{end}}
 </div>
-{{end}}
+
 ```
 Generated code:
 ```go
-type PersonCardData struct {
-  Name     any
-  Age      any
-  Email    any
-  Interest []PersonCardInterestItem
+type PersonContact struct {
+  Phone any
+  Email any
 }
 
-type PersonCardInterestItem struct {
-    any
+type PersonData struct {
+  Name    any
+  Age     any
+  Contact *PersonContact
+  Socials []PersonSocial
 }
 
-// PersonCard renders the "PersonCard" template as an HTML fragment
-func PersonCard(data PersonCardData) template.HTML
+type PersonSocial struct {
+  Href any
+  Name any
+}
 
-// RenderPersonCard renders the "PersonCard" template to a writer
-func RenderPersonCard(w io.Writer, data PersonCardData) error
+// Person renders the "Person" template as an HTML fragment
+func Person(data PersonData) template.HTML {
+    return mustHTML(RenderPerson, data)
+}
 
-// RenderPersonCardHTTP renders PersonCard to an http.ResponseWriter
-func RenderPersonCardHTTP(w http.ResponseWriter, data PersonCardData) error
+// RenderPerson renders the "Person" template to a writer
+func RenderPerson(w io.Writer, data PersonData) error {
+    return tmpl().ExecuteTemplate(w, "person.gohtml", data)
+}
+
+// RenderPersonHTTP renders "person.gohtml" to an http.ResponseWriter
+func RenderPersonHTTP(w http.ResponseWriter, data PersonData) error {
+    w.Header().Set("Content-Type", "text/html; charset=utf-8")
+    return tmpl().ExecuteTemplate(w, "person.gohtml", data)
+}
 ```
 
 > 💡Look at the `tests` and `example` directories for more advanced examples
